@@ -89,7 +89,7 @@ public class Call {
 
             repository().findById(callId).ifPresent(call->{
             
-                call.setCallStatus("request");
+                call.setCallStatus("driveRequest");
                 repository().save(call);
     
                 CallPlaced callPlaced = new CallPlaced(call);
@@ -120,14 +120,16 @@ public class Call {
 
         System.out.println("##### onPostUpdate() #####");
 
-            repository().findById(callId).ifPresent(call->{
-            
-                call.setCallStatus("cancel");
-                repository().save(call);
-    
+        repository().findById(callId).ifPresent(call->{
+
+            if("callCancel".equals(call.getCallStatus())) {
+
                 CallCancelled callCancelled = new CallCancelled(call);
                 callCancelled.publishAfterCommit();
-            });
+
+            }
+
+        });
 
     }
 
@@ -139,78 +141,48 @@ public class Call {
     }
 
     //<<< Clean Arch / Port Method
+    @Transactional
     public static void cancelCall(DriveNotAvailavled driveNotAvailavled) {
         
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Call call = new Call();
-        repository().save(call);
-
-        CallCancelled callCancelled = new CallCancelled(call);
-        callCancelled.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-        repository().findById(driveNotAvailavled.get???()).ifPresent(call->{
+        // 드라이버가 없으면
+        // callStatus를 callCancel로 바꾸고
+        // callCancelled 이벤트 발행
+        repository().findById(Long.valueOf(driveNotAvailavled.getCallId())).ifPresent(call->{
             
-            call // do something
+            call.setCallStatus("callCancel");
             repository().save(call);
 
             CallCancelled callCancelled = new CallCancelled(call);
             callCancelled.publishAfterCommit();
 
-         });
-        */
+        });
+
 
     }
 
     //>>> Clean Arch / Port Method
     //<<< Clean Arch / Port Method
+    @Transactional
     public static void changeCallStatus(DriveStarted driveStarted) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Call call = new Call();
-        repository().save(call);
-
-        */
-
-        /** Example 2:  finding and process
-        
-        repository().findById(driveStarted.get???()).ifPresent(call->{
+        repository().findById(Long.valueOf(driveStarted.getCallId())).ifPresent(call->{
             
-            call // do something
+            call.setCallStatus("driveStart");
             repository().save(call);
 
-
-         });
-        */
+        });
 
     }
 
     //>>> Clean Arch / Port Method
     //<<< Clean Arch / Port Method
+    @Transactional
     public static void changeCallStatus(DrivieEnded drivieEnded) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Call call = new Call();
-        repository().save(call);
-
-        */
-
-        /** Example 2:  finding and process
-        
-        repository().findById(drivieEnded.get???()).ifPresent(call->{
+        repository().findById(Long.valueOf(drivieEnded.getCallId())).ifPresent(call->{
             
-            call // do something
+            call.setCallStatus("driveComplete");
             repository().save(call);
 
-
-         });
-        */
+        });
 
     }
     //>>> Clean Arch / Port Method

@@ -28,6 +28,8 @@ public class PolicyHandler {
         condition = "headers['type']=='FarePaid'"
     )
     public void wheneverFarePaid_RequestDriver(@Payload FarePaid farePaid) {
+        // 요금지불 이벤트가 생성되면
+        // 드라이브시작 이벤트 발행
         FarePaid event = farePaid;
         System.out.println(
             "\n\n##### listener RequestDriver : " + farePaid + "\n\n"

@@ -28,16 +28,56 @@ public class Drive {
 
     private String taxiNum;
 
+    public Long getDriveId(){
+        return driveId;
+    }
+
+    public void setDriveId(Long driveId){
+        this.driveId = driveId;
+    }
+
+    public String getDriverName() {
+        return driverName;
+    }
+
+    public void setDriverName(String driverName) {
+        this.driverName = driverName;
+    }
+
+    public Long getCallId() {
+        return callId;
+    }
+
+    public void setCallId(Long callId) {
+        this.callId = callId;
+    }
+
+    public String getDriveStatus() {
+        return driveStatus;
+    }
+
+    public void setDriveStatus(String driveStatus) {
+        this.driveStatus = driveStatus;
+    }
+
+    public String getTaxiNum() {
+        return taxiNum;
+    }
+
+    public void seTaxiNum(String taxiNum) {
+        this.taxiNum = taxiNum;
+    }
+
     @PostPersist
     public void onPostPersist() {
         DriveStarted driveStarted = new DriveStarted(this);
         driveStarted.publishAfterCommit();
 
-        DriveNotAvailavled driveNotAvailavled = new DriveNotAvailavled(this);
-        driveNotAvailavled.publishAfterCommit();
+        // DriveNotAvailavled driveNotAvailavled = new DriveNotAvailavled(this);
+        // driveNotAvailavled.publishAfterCommit();
 
-        DrivieEnded drivieEnded = new DrivieEnded(this);
-        drivieEnded.publishAfterCommit();
+        // DrivieEnded drivieEnded = new DrivieEnded(this);
+        // drivieEnded.publishAfterCommit();
     }
 
     public static DriveRepository repository() {
@@ -49,32 +89,11 @@ public class Drive {
 
     //<<< Clean Arch / Port Method
     public static void requestDriver(FarePaid farePaid) {
-        //implement business logic here:
 
-        /** Example 1:  new item 
         Drive drive = new Drive();
+        drive.setCallId(farePaid.getCallId());
+        drive.setDriveStatus("started");
         repository().save(drive);
-
-        DriveStarted driveStarted = new DriveStarted(drive);
-        driveStarted.publishAfterCommit();
-        DriveNotAvailavled driveNotAvailavled = new DriveNotAvailavled(drive);
-        driveNotAvailavled.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-        repository().findById(farePaid.get???()).ifPresent(drive->{
-            
-            drive // do something
-            repository().save(drive);
-
-            DriveStarted driveStarted = new DriveStarted(drive);
-            driveStarted.publishAfterCommit();
-            DriveNotAvailavled driveNotAvailavled = new DriveNotAvailavled(drive);
-            driveNotAvailavled.publishAfterCommit();
-
-         });
-        */
 
     }
     //>>> Clean Arch / Port Method

@@ -62,24 +62,8 @@ public class Payment {
 
     //<<< Clean Arch / Port Method
     public static void cancelPay(CallCancelled callCancelled) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Payment payment = new Payment();
-        repository().save(payment);
-
-        */
-
-        /** Example 2:  finding and process
         
-        repository().findById(callCancelled.get???()).ifPresent(payment->{
-            
-            payment // do something
-            repository().save(payment);
-
-
-         });
-        */
+        System.out.println("##### call pay cancelled~~ #####");
 
     }
     //>>> Clean Arch / Port Method
