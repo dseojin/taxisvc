@@ -95,7 +95,7 @@ public class Drive {
 
         repository().findById(driveId).ifPresent(drive->{
             
-            if("driveEnd".equals(drive.getDriveStatus())) {
+            if("end".equals(drive.getDriveStatus())) {
                 DrivieEnded drivieEnded = new DrivieEnded(this);
                 drivieEnded.publishAfterCommit();
            }
@@ -116,7 +116,7 @@ public class Drive {
 
         Drive drive = new Drive();
         drive.setCallId(farePaid.getCallId());
-        drive.setDriveStatus("started");
+        drive.setDriveStatus("start");
         repository().save(drive);
 
     }

@@ -15,6 +15,7 @@ import taxisvc.domain.CallPlaced;
 @Entity
 @Table(name = "Call_table")
 @Data
+@Transactional
 //<<< DDD / Aggregate Root
 public class Call {
 
@@ -71,7 +72,6 @@ public class Call {
     }
 
     @PostPersist
-    @Transactional
     public void onPostPersist() {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
@@ -114,7 +114,6 @@ public class Call {
     }
 
     @PostUpdate
-    @Transactional
     public void onPostUpdate() {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
@@ -123,7 +122,7 @@ public class Call {
 
         repository().findById(callId).ifPresent(call->{
 
-            if("callCancel".equals(call.getCallStatus())) {
+            if("requestCancel".equals(call.getCallStatus())) {
 
                 CallCancelled callCancelled = new CallCancelled(call);
                 callCancelled.publishAfterCommit();
@@ -142,7 +141,6 @@ public class Call {
     }
 
     //<<< Clean Arch / Port Method
-    @Transactional
     public static void cancelCall(DriveNotAvailavled driveNotAvailavled) {
         
         // 드라이버가 없으면
@@ -150,7 +148,7 @@ public class Call {
         // callCancelled 이벤트 발행
         repository().findById(Long.valueOf(driveNotAvailavled.getCallId())).ifPresent(call->{
             
-            call.setCallStatus("callCancel");
+            call.setCallStatus("requestCancel");
             repository().save(call);
 
             CallCancelled callCancelled = new CallCancelled(call);
@@ -163,7 +161,6 @@ public class Call {
 
     //>>> Clean Arch / Port Method
     //<<< Clean Arch / Port Method
-    @Transactional
     public static void changeCallStatus(DriveStarted driveStarted) {
         repository().findById(Long.valueOf(driveStarted.getCallId())).ifPresent(call->{
             
@@ -176,7 +173,6 @@ public class Call {
 
     //>>> Clean Arch / Port Method
     //<<< Clean Arch / Port Method
-    @Transactional
     public static void changeCallStatus(DrivieEnded drivieEnded) {
         repository().findById(Long.valueOf(drivieEnded.getCallId())).ifPresent(call->{
             
