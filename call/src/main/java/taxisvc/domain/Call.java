@@ -72,21 +72,25 @@ public class Call {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
 
-        taxisvc.external.Payment payment = new taxisvc.external.Payment();
-        payment.setCallId(callId);
-        payment.setFare(distance * 10000);
-        
-        System.out.println("##### /payments/pay  call #####");
-        // mappings goes here
-        CallApplication.applicationContext
-            .getBean(taxisvc.external.PaymentService.class)
-            .pay(payment);
+        try{
+            taxisvc.external.Payment payment = new taxisvc.external.Payment();
+            payment.setCallId(callId);
+            payment.setFare(distance * 10000);
+            
+            System.out.println("##### /payments/pay  call #####");
+            // mappings goes here
+            CallApplication.applicationContext
+                .getBean(taxisvc.external.PaymentService.class)
+                .pay(payment);
 
-        // CallPlaced callPlaced = new CallPlaced(this);
-        // callPlaced.publishAfterCommit();
+            // CallPlaced callPlaced = new CallPlaced(this);
+            // callPlaced.publishAfterCommit();
+        }catch(Exception e){
+            System.out.println("##### /payments/pay  call  failed #####");
+            // CallCancelled callCancelled = new CallCancelled(this);
+            // callCancelled.publishAfterCommit();
+        }
 
-        // CallCancelled callCancelled = new CallCancelled(this);
-        // callCancelled.publishAfterCommit();
     }
 
     public static CallRepository repository() {
