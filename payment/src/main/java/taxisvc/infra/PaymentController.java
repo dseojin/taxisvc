@@ -19,5 +19,17 @@ public class PaymentController {
 
     @Autowired
     PaymentRepository paymentRepository;
+
+    @RequestMapping(value="/payments", method=RequestMethod.POST) 
+    public Payment pay (
+        @RequestBody Payment payment,
+        HttpServletRequest request,
+        HttpServletResponse response) throws Exception  {
+
+            System.out.println("##### /payments/pay  called #####");
+            paymentRepository.save(payment);
+
+            return payment;
+    }
 }
 //>>> Clean Arch / Inbound Adaptor
