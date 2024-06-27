@@ -15,15 +15,16 @@ import taxisvc.domain.DriveNotAvailavled;
 import taxisvc.domain.DriveStarted;
 import taxisvc.domain.DrivieEnded;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "Drive_table")
 @Data
-@Transactional
 //<<< DDD / Aggregate Root
 public class Drive {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long driveId;
 
     private String driverName;
@@ -34,56 +35,59 @@ public class Drive {
 
     private String taxiNum;
 
-    public Long getDriveId(){
-        return driveId;
-    }
+    private BigDecimal fare;
 
-    public void setDriveId(Long driveId){
-        this.driveId = driveId;
-    }
+    // public Long getDriveId(){
+    //     return driveId;
+    // }
 
-    public String getDriverName() {
-        return driverName;
-    }
+    // public void setDriveId(Long driveId){
+    //     this.driveId = driveId;
+    // }
 
-    public void setDriverName(String driverName) {
-        this.driverName = driverName;
-    }
+    // public String getDriverName() {
+    //     return driverName;
+    // }
 
-    public Long getCallId() {
-        return callId;
-    }
+    // public void setDriverName(String driverName) {
+    //     this.driverName = driverName;
+    // }
 
-    public void setCallId(Long callId) {
-        this.callId = callId;
-    }
+    // public Long getCallId() {
+    //     return callId;
+    // }
 
-    public String getDriveStatus() {
-        return driveStatus;
-    }
+    // public void setCallId(Long callId) {
+    //     this.callId = callId;
+    // }
 
-    public void setDriveStatus(String driveStatus) {
-        this.driveStatus = driveStatus;
-    }
+    // public String getDriveStatus() {
+    //     return driveStatus;
+    // }
 
-    public String getTaxiNum() {
-        return taxiNum;
-    }
+    // public void setDriveStatus(String driveStatus) {
+    //     this.driveStatus = driveStatus;
+    // }
 
-    public void seTaxiNum(String taxiNum) {
-        this.taxiNum = taxiNum;
-    }
+    // public String getTaxiNum() {
+    //     return taxiNum;
+    // }
+
+    // public void seTaxiNum(String taxiNum) {
+    //     this.taxiNum = taxiNum;
+    // }
 
     @PostPersist
+    @Transactional
     public void onPostPersist() {
-
-        Random random = new Random();
-        int r = random.nextInt(100);
-
-        if(r >= 0 && r <= 90) {
+        BigDecimal a = new BigDecimal(1000000);
+        System.out.println("3333333333##### Driver.onPostPersist  #####");
+        if((fare.compareTo(a)) != 1) {
+            System.out.println("4444444444##### Driver.onPostPersist  #####");
             DriveStarted driveStarted = new DriveStarted(this);
             driveStarted.publishAfterCommit();
         }else {
+            System.out.println("5555555555##### Driver.onPostPersist  #####");
             DriveNotAvailavled driveNotAvailavled = new DriveNotAvailavled(this);
             driveNotAvailavled.publishAfterCommit();
         }
@@ -91,12 +95,13 @@ public class Drive {
     }
 
     @PostUpdate
+    @Transactional
     public void onPostUpdate() {
 
         repository().findById(driveId).ifPresent(drive->{
-            
+            System.out.println("6666666666##### Driver.onPostUpdate  #####" + drive);
             if("end".equals(drive.getDriveStatus())) {
-                DrivieEnded drivieEnded = new DrivieEnded(this);
+                DrivieEnded drivieEnded = new DrivieEnded(drive);
                 drivieEnded.publishAfterCommit();
            }
 
@@ -112,12 +117,18 @@ public class Drive {
     }
 
     //<<< Clean Arch / Port Method
+    @Transactional
     public static void requestDriver(FarePaid farePaid) {
 
+        System.out.println("1111111111##### Driver.requestDriver  #####" + farePaid.getFare());
         Drive drive = new Drive();
         drive.setCallId(farePaid.getCallId());
+        drive.setFare(farePaid.getFare());
         drive.setDriveStatus("start");
-        repository().save(drive);
+        repository().saveAndFlush(drive);
+        //repository().save(drive);
+
+        System.out.println("2222222222##### Driver.requestDriver  #####" + drive);
 
     }
     //>>> Clean Arch / Port Method

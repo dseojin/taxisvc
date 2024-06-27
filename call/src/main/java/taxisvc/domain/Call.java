@@ -15,7 +15,6 @@ import taxisvc.domain.CallPlaced;
 @Entity
 @Table(name = "Call_table")
 @Data
-@Transactional
 //<<< DDD / Aggregate Root
 public class Call {
 
@@ -31,47 +30,48 @@ public class Call {
 
     private Float distance;
 
-    public Long getCallId() {
-        return callId;
-    }
+    // public Long getCallId() {
+    //     return callId;
+    // }
 
-    public void setCallId(Long callId) {
-        this.callId = callId;
-    }
+    // public void setCallId(Long callId) {
+    //     this.callId = callId;
+    // }
 
-    public String getUserId() {
-        return userId;
-    }
+    // public String getUserId() {
+    //     return userId;
+    // }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    // public void setUserId(String userId) {
+    //     this.userId = userId;
+    // }
 
-    public String getUserName() {
-        return userName;
-    }
+    // public String getUserName() {
+    //     return userName;
+    // }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+    // public void setUserName(String userName) {
+    //     this.userName = userName;
+    // }
 
-    public String getCallStatus() {
-        return callStatus;
-    }
+    // public String getCallStatus() {
+    //     return callStatus;
+    // }
 
-    public void setCallStatus(String callStatus) {
-        this.callStatus = callStatus;
-    }
+    // public void setCallStatus(String callStatus) {
+    //     this.callStatus = callStatus;
+    // }
 
-    public Float getDistance() {
-        return distance;
-    }
+    // public Float getDistance() {
+    //     return distance;
+    // }
 
-    public void setDistance(Float distance) {
-        this.distance = distance;
-    }
+    // public void setDistance(Float distance) {
+    //     this.distance = distance;
+    // }
 
     @PostPersist
+    @Transactional
     public void onPostPersist() {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
@@ -91,7 +91,8 @@ public class Call {
             repository().findById(callId).ifPresent(call->{
             
                 call.setCallStatus("driveRequest");
-                repository().save(call);
+                repository().saveAndFlush(call);
+                //repository().save(call);
     
                 CallPlaced callPlaced = new CallPlaced(call);
                 callPlaced.publishAfterCommit();
@@ -104,7 +105,8 @@ public class Call {
             repository().findById(callId).ifPresent(call->{
             
                 call.setCallStatus("payFail");
-                repository().save(call);
+                repository().saveAndFlush(call);
+                //repository().save(call);
     
                 CallCancelled callCancelled = new CallCancelled(call);
                 callCancelled.publishAfterCommit();
@@ -114,6 +116,7 @@ public class Call {
     }
 
     @PostUpdate
+    @Transactional
     public void onPostUpdate() {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
@@ -141,6 +144,7 @@ public class Call {
     }
 
     //<<< Clean Arch / Port Method
+    @Transactional
     public static void cancelCall(DriveNotAvailavled driveNotAvailavled) {
         
         // 드라이버가 없으면
@@ -149,7 +153,8 @@ public class Call {
         repository().findById(Long.valueOf(driveNotAvailavled.getCallId())).ifPresent(call->{
             
             call.setCallStatus("requestCancel");
-            repository().save(call);
+            repository().saveAndFlush(call);
+            //repository().save(call);
 
             CallCancelled callCancelled = new CallCancelled(call);
             callCancelled.publishAfterCommit();
@@ -161,11 +166,13 @@ public class Call {
 
     //>>> Clean Arch / Port Method
     //<<< Clean Arch / Port Method
+    @Transactional
     public static void changeCallStatus(DriveStarted driveStarted) {
         repository().findById(Long.valueOf(driveStarted.getCallId())).ifPresent(call->{
             
             call.setCallStatus("driveStart");
-            repository().save(call);
+            repository().saveAndFlush(call);
+            //repository().save(call);
 
         });
 
@@ -173,11 +180,13 @@ public class Call {
 
     //>>> Clean Arch / Port Method
     //<<< Clean Arch / Port Method
+    @Transactional
     public static void changeCallStatus(DrivieEnded drivieEnded) {
         repository().findById(Long.valueOf(drivieEnded.getCallId())).ifPresent(call->{
             
             call.setCallStatus("driveComplete");
-            repository().save(call);
+            repository().saveAndFlush(call);
+            //repository().save(call);
 
         });
 
