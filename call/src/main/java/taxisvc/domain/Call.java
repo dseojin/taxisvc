@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
+import javax.transaction.Transactional;
+
 import lombok.Data;
 import taxisvc.CallApplication;
 import taxisvc.domain.CallCancelled;
@@ -68,9 +70,11 @@ public class Call {
     }
 
     @PostPersist
+    @Transactional
     public void onPostPersist() {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
+        System.out.println("##### onPostPersist() #####");
 
         try{
             taxisvc.external.Payment payment = new taxisvc.external.Payment();
@@ -105,6 +109,25 @@ public class Call {
                 callCancelled.publishAfterCommit();
             });
         }
+
+    }
+
+    @PostUpdate
+    @Transactional
+    public void onPostUpdate() {
+        //Following code causes dependency to external APIs
+        // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
+
+        System.out.println("##### onPostUpdate() #####");
+
+            repository().findById(callId).ifPresent(call->{
+            
+                call.setCallStatus("cancel");
+                repository().save(call);
+    
+                CallCancelled callCancelled = new CallCancelled(call);
+                callCancelled.publishAfterCommit();
+            });
 
     }
 
