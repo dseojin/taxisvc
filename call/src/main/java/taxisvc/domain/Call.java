@@ -83,12 +83,27 @@ public class Call {
                 .getBean(taxisvc.external.PaymentService.class)
                 .pay(payment);
 
-            // CallPlaced callPlaced = new CallPlaced(this);
-            // callPlaced.publishAfterCommit();
+            repository().findById(callId).ifPresent(call->{
+            
+                call.setCallStatus("request");
+                repository().save(call);
+    
+                CallPlaced callPlaced = new CallPlaced(call);
+                callPlaced.publishAfterCommit();
+             });
+
+
         }catch(Exception e){
             System.out.println("##### /payments/pay  call  failed #####");
-            // CallCancelled callCancelled = new CallCancelled(this);
-            // callCancelled.publishAfterCommit();
+
+            repository().findById(callId).ifPresent(call->{
+            
+                call.setCallStatus("payFail");
+                repository().save(call);
+    
+                CallCancelled callCancelled = new CallCancelled(call);
+                callCancelled.publishAfterCommit();
+            });
         }
 
     }
@@ -102,6 +117,7 @@ public class Call {
 
     //<<< Clean Arch / Port Method
     public static void cancelCall(DriveNotAvailavled driveNotAvailavled) {
+        
         //implement business logic here:
 
         /** Example 1:  new item 
