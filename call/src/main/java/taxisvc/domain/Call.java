@@ -27,22 +27,66 @@ public class Call {
 
     private Float distance;
 
+    public Long getCallId() {
+        return callId;
+    }
+
+    public void setCallId(Long callId) {
+        this.callId = callId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getCallStatus() {
+        return callStatus;
+    }
+
+    public void setCallStatus(String callStatus) {
+        this.callStatus = callStatus;
+    }
+
+    public Float getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Float distance) {
+        this.distance = distance;
+    }
+
     @PostPersist
     public void onPostPersist() {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
 
         taxisvc.external.Payment payment = new taxisvc.external.Payment();
+        payment.setCallId(callId);
+        payment.setFare(distance * 10000);
+        
+        System.out.println("##### /payments/pay  call #####");
         // mappings goes here
         CallApplication.applicationContext
             .getBean(taxisvc.external.PaymentService.class)
             .pay(payment);
 
-        CallPlaced callPlaced = new CallPlaced(this);
-        callPlaced.publishAfterCommit();
+        // CallPlaced callPlaced = new CallPlaced(this);
+        // callPlaced.publishAfterCommit();
 
-        CallCancelled callCancelled = new CallCancelled(this);
-        callCancelled.publishAfterCommit();
+        // CallCancelled callCancelled = new CallCancelled(this);
+        // callCancelled.publishAfterCommit();
     }
 
     public static CallRepository repository() {
