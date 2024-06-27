@@ -1,0 +1,84 @@
+server:
+  port: 8088
+
+---
+
+spring:
+  profiles: default
+  cloud:
+    gateway:
+#<<< API Gateway / Routes
+      routes:
+        - id: call
+          uri: http://localhost:8082
+          predicates:
+            - Path=/calls/**, 
+        - id: payment
+          uri: http://localhost:8083
+          predicates:
+            - Path=/payments/**, 
+        - id: drive
+          uri: http://localhost:8084
+          predicates:
+            - Path=/drives/**, 
+        - id: mypage
+          uri: http://localhost:8085
+          predicates:
+            - Path=, 
+        - id: frontend
+          uri: http://localhost:8080
+          predicates:
+            - Path=/**
+#>>> API Gateway / Routes
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+
+---
+
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: call
+          uri: http://call:8080
+          predicates:
+            - Path=/calls/**, 
+        - id: payment
+          uri: http://payment:8080
+          predicates:
+            - Path=/payments/**, 
+        - id: drive
+          uri: http://drive:8080
+          predicates:
+            - Path=/drives/**, 
+        - id: mypage
+          uri: http://mypage:8080
+          predicates:
+            - Path=, 
+        - id: frontend
+          uri: http://frontend:8080
+          predicates:
+            - Path=/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+server:
+  port: 8080
