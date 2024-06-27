@@ -23,6 +23,30 @@ public class Payment {
 
     private BigDecimal fare;
 
+    public Long getPayId() {
+        return payId;
+    }
+
+    public void setPayId(Long payId) {
+        this.payId = payId;
+    }
+
+    public Long getCallId() {
+        return callId;
+    }
+
+    public void setCallId(Long callId) {
+        this.callId = callId;
+    }
+
+    public BigDecimal getFare() {
+        return fare;
+    }
+
+    public void setFare(BigDecimal fare) {
+        this.fare = fare;
+    }
+
     @PostPersist
     public void onPostPersist() {
         FarePaid farePaid = new FarePaid(this);
