@@ -13,7 +13,7 @@ import lombok.Data;
 public class CallView {
 
     @Id
-    //@GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
 
     private Long callId;
