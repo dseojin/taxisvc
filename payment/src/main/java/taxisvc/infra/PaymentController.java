@@ -20,7 +20,7 @@ public class PaymentController {
     @Autowired
     PaymentRepository paymentRepository;
 
-    @RequestMapping(value="/payments", method=RequestMethod.POST) 
+    @RequestMapping(value="/callpay", method=RequestMethod.POST) 
     public Payment pay (
         @RequestBody Payment payment,
         HttpServletRequest request,
