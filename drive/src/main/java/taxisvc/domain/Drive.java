@@ -3,7 +3,12 @@ package taxisvc.domain;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+
 import javax.persistence.*;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.Data;
 import taxisvc.DriveApplication;
 import taxisvc.domain.DriveNotAvailavled;
@@ -13,6 +18,7 @@ import taxisvc.domain.DrivieEnded;
 @Entity
 @Table(name = "Drive_table")
 @Data
+@Transactional
 //<<< DDD / Aggregate Root
 public class Drive {
 
@@ -70,14 +76,32 @@ public class Drive {
 
     @PostPersist
     public void onPostPersist() {
-        DriveStarted driveStarted = new DriveStarted(this);
-        driveStarted.publishAfterCommit();
 
-        // DriveNotAvailavled driveNotAvailavled = new DriveNotAvailavled(this);
-        // driveNotAvailavled.publishAfterCommit();
+        Random random = new Random();
+        int r = random.nextInt(100);
 
-        // DrivieEnded drivieEnded = new DrivieEnded(this);
-        // drivieEnded.publishAfterCommit();
+        if(r >= 0 && r <= 90) {
+            DriveStarted driveStarted = new DriveStarted(this);
+            driveStarted.publishAfterCommit();
+        }else {
+            DriveNotAvailavled driveNotAvailavled = new DriveNotAvailavled(this);
+            driveNotAvailavled.publishAfterCommit();
+        }
+
+    }
+
+    @PostUpdate
+    public void onPostUpdate() {
+
+        repository().findById(driveId).ifPresent(drive->{
+            
+            if("driveEnd".equals(drive.getDriveStatus())) {
+                DrivieEnded drivieEnded = new DrivieEnded(this);
+                drivieEnded.publishAfterCommit();
+           }
+
+        });
+
     }
 
     public static DriveRepository repository() {
