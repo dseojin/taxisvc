@@ -35,40 +35,51 @@ public class Call {
     public void onPostPersist() {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
-        System.out.println("##### onPostPersist() #####");
+        System.out.println("##### onPostPersist() ##### this ::::: " + this);
 
         try{
             taxisvc.external.Payment payment = new taxisvc.external.Payment();
             payment.setCallId(callId);
             payment.setFare(distance * 10000);
             
-            System.out.println("##### /payments/pay  call #####");
+            System.out.println("##### /payments/pay  call 1 #####");
             // mappings goes here
             CallApplication.applicationContext
                 .getBean(taxisvc.external.PaymentService.class)
                 .pay(payment);
 
-            repository().findById(callId).ifPresent(call->{
+            System.out.println("##### /payments/pay  call 2 #####");
+
+            this.setCallStatus("driveRequest");
+            repository().save(this);
+
+            CallPlaced callPlaced = new CallPlaced(this);
+            callPlaced.publishAfterCommit();
             
-                call.setCallStatus("driveRequest");
-                repository().save(call);
+            // repository().findById(callId).ifPresent(call->{
+            
+            //     call.setCallStatus("driveRequest");
+            //     repository().save(call);
 
-                CallPlaced callPlaced = new CallPlaced(call);
-                callPlaced.publishAfterCommit();
+            //     CallPlaced callPlaced = new CallPlaced(call);
+            //     callPlaced.publishAfterCommit();
                 
-             });
+            //  });
 
+             System.out.println("##### /payments/pay  call 3 #####");
 
         }catch(Exception e){
             System.out.println("##### /payments/pay  call  failed #####");
 
-            repository().findById(callId).ifPresent(call->{
+            this.setCallStatus("payFail");
+            repository().saveAndFlush(this);
+            // repository().findById(callId).ifPresent(call->{
             
-                call.setCallStatus("payFail");
-                repository().saveAndFlush(call);
-                //repository().save(call);
+            //     call.setCallStatus("payFail");
+            //     repository().saveAndFlush(call);
+            //     //repository().save(call);
     
-            });
+            // });
         }
 
     }
@@ -79,18 +90,25 @@ public class Call {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
 
-        System.out.println("##### onPostUpdate() #####");
+        System.out.println("##### onPostUpdate() ##### this :::::" +this);
 
-        repository().findById(callId).ifPresent(call->{
+        if("requestCancel".equals(this.getCallStatus())) {
 
-            if("requestCancel".equals(call.getCallStatus())) {
+            CallCancelled callCancelled = new CallCancelled(this);
+            callCancelled.publishAfterCommit();
 
-                CallCancelled callCancelled = new CallCancelled(call);
-                callCancelled.publishAfterCommit();
+        }
+        
+        // repository().findById(callId).ifPresent(call->{
 
-            }
+        //     if("requestCancel".equals(call.getCallStatus())) {
 
-        });
+        //         CallCancelled callCancelled = new CallCancelled(call);
+        //         callCancelled.publishAfterCommit();
+
+        //     }
+
+        // });
 
     }
 

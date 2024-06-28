@@ -23,9 +23,11 @@ public class DriveController {
     @PostMapping("/end")
     public void end(@RequestBody Drive drive){
         driveRepository.findById(drive.getDriveId()).ifPresent(data->{
-            data.setDriveStatus("end");
+            if("start".equals(data.getDriveStatus())) {
+                data.setDriveStatus("end");
 
-            driveRepository.save(data);
+                driveRepository.save(data);
+            }
         });
     }
 }
