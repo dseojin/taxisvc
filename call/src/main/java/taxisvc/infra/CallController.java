@@ -13,11 +13,20 @@ import taxisvc.domain.*;
 //<<< Clean Arch / Inbound Adaptor
 
 @RestController
-// @RequestMapping(value="/calls")
+@RequestMapping(value="/calls")
 @Transactional
 public class CallController {
 
     @Autowired
     CallRepository callRepository;
+
+    @PostMapping("/cancel")
+    public void cancle(@RequestBody Call call){
+        callRepository.findById(call.getCallId()).ifPresent(data->{
+            data.setCallStatus("requestCancel");
+
+            callRepository.save(data);
+        });
+    }
 }
 //>>> Clean Arch / Inbound Adaptor

@@ -37,56 +37,26 @@ public class Drive {
 
     private BigDecimal fare;
 
-    // public Long getDriveId(){
-    //     return driveId;
-    // }
-
-    // public void setDriveId(Long driveId){
-    //     this.driveId = driveId;
-    // }
-
-    // public String getDriverName() {
-    //     return driverName;
-    // }
-
-    // public void setDriverName(String driverName) {
-    //     this.driverName = driverName;
-    // }
-
-    // public Long getCallId() {
-    //     return callId;
-    // }
-
-    // public void setCallId(Long callId) {
-    //     this.callId = callId;
-    // }
-
-    // public String getDriveStatus() {
-    //     return driveStatus;
-    // }
-
-    // public void setDriveStatus(String driveStatus) {
-    //     this.driveStatus = driveStatus;
-    // }
-
-    // public String getTaxiNum() {
-    //     return taxiNum;
-    // }
-
-    // public void seTaxiNum(String taxiNum) {
-    //     this.taxiNum = taxiNum;
-    // }
-
     @PostPersist
     @Transactional
     public void onPostPersist() {
         BigDecimal a = new BigDecimal(1000000);
         System.out.println("3333333333##### Driver.onPostPersist  #####");
         if((fare.compareTo(a)) != 1) {
+            repository().findById(driveId).ifPresent(data->{
+                data.setDriveStatus("start");
+                repository().save(data);
+            });
+
             System.out.println("4444444444##### Driver.onPostPersist  #####");
             DriveStarted driveStarted = new DriveStarted(this);
             driveStarted.publishAfterCommit();
         }else {
+            repository().findById(driveId).ifPresent(data->{
+                data.setDriveStatus("requestCancel");
+                repository().save(data);
+            });
+
             System.out.println("5555555555##### Driver.onPostPersist  #####");
             DriveNotAvailavled driveNotAvailavled = new DriveNotAvailavled(this);
             driveNotAvailavled.publishAfterCommit();
@@ -124,9 +94,10 @@ public class Drive {
         Drive drive = new Drive();
         drive.setCallId(farePaid.getCallId());
         drive.setFare(farePaid.getFare());
-        drive.setDriveStatus("start");
-        repository().saveAndFlush(drive);
-        //repository().save(drive);
+        String taxiNum = String.valueOf(farePaid.getCallId() * 1111).substring(0, 4);
+        drive.setTaxiNum(taxiNum);
+        drive.setDriverName("driver"+taxiNum);
+        repository().save(drive);
 
         System.out.println("2222222222##### Driver.requestDriver  #####" + drive);
 

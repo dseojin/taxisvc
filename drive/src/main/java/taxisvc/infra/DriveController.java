@@ -13,11 +13,20 @@ import taxisvc.domain.*;
 //<<< Clean Arch / Inbound Adaptor
 
 @RestController
-// @RequestMapping(value="/drives")
+@RequestMapping(value="/drives")
 @Transactional
 public class DriveController {
 
     @Autowired
     DriveRepository driveRepository;
+
+    @PostMapping("/end")
+    public void end(@RequestBody Drive drive){
+        driveRepository.findById(drive.getDriveId()).ifPresent(data->{
+            data.setDriveStatus("driveComplete");
+
+            driveRepository.save(data);
+        });
+    }
 }
 //>>> Clean Arch / Inbound Adaptor

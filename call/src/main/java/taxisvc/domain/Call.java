@@ -30,46 +30,6 @@ public class Call {
 
     private Float distance;
 
-    // public Long getCallId() {
-    //     return callId;
-    // }
-
-    // public void setCallId(Long callId) {
-    //     this.callId = callId;
-    // }
-
-    // public String getUserId() {
-    //     return userId;
-    // }
-
-    // public void setUserId(String userId) {
-    //     this.userId = userId;
-    // }
-
-    // public String getUserName() {
-    //     return userName;
-    // }
-
-    // public void setUserName(String userName) {
-    //     this.userName = userName;
-    // }
-
-    // public String getCallStatus() {
-    //     return callStatus;
-    // }
-
-    // public void setCallStatus(String callStatus) {
-    //     this.callStatus = callStatus;
-    // }
-
-    // public Float getDistance() {
-    //     return distance;
-    // }
-
-    // public void setDistance(Float distance) {
-    //     this.distance = distance;
-    // }
-
     @PostPersist
     @Transactional
     public void onPostPersist() {
@@ -91,11 +51,8 @@ public class Call {
             repository().findById(callId).ifPresent(call->{
             
                 call.setCallStatus("driveRequest");
-                repository().saveAndFlush(call);
-                //repository().save(call);
-    
-                CallPlaced callPlaced = new CallPlaced(call);
-                callPlaced.publishAfterCommit();
+                repository().save(call);
+                
              });
 
 
@@ -108,8 +65,6 @@ public class Call {
                 repository().saveAndFlush(call);
                 //repository().save(call);
     
-                CallCancelled callCancelled = new CallCancelled(call);
-                callCancelled.publishAfterCommit();
             });
         }
 
@@ -130,6 +85,10 @@ public class Call {
                 CallCancelled callCancelled = new CallCancelled(call);
                 callCancelled.publishAfterCommit();
 
+            }else if("driveRequest".equals(call.getCallStatus())) {
+
+                CallPlaced callPlaced = new CallPlaced(call);
+                callPlaced.publishAfterCommit();
             }
 
         });
@@ -147,17 +106,13 @@ public class Call {
     @Transactional
     public static void cancelCall(DriveNotAvailavled driveNotAvailavled) {
         
-        // 드라이버가 없으면
+        // 거리가 너무 멀면
         // callStatus를 callCancel로 바꾸고
         // callCancelled 이벤트 발행
         repository().findById(Long.valueOf(driveNotAvailavled.getCallId())).ifPresent(call->{
             
             call.setCallStatus("requestCancel");
-            repository().saveAndFlush(call);
-            //repository().save(call);
-
-            CallCancelled callCancelled = new CallCancelled(call);
-            callCancelled.publishAfterCommit();
+            repository().save(call);
 
         });
 
@@ -171,8 +126,7 @@ public class Call {
         repository().findById(Long.valueOf(driveStarted.getCallId())).ifPresent(call->{
             
             call.setCallStatus("driveStart");
-            repository().saveAndFlush(call);
-            //repository().save(call);
+            repository().save(call);
 
         });
 
@@ -185,8 +139,7 @@ public class Call {
         repository().findById(Long.valueOf(drivieEnded.getCallId())).ifPresent(call->{
             
             call.setCallStatus("driveComplete");
-            repository().saveAndFlush(call);
-            //repository().save(call);
+            repository().save(call);
 
         });
 
