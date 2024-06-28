@@ -52,6 +52,9 @@ public class Call {
             
                 call.setCallStatus("driveRequest");
                 repository().save(call);
+
+                CallPlaced callPlaced = new CallPlaced(call);
+                callPlaced.publishAfterCommit();
                 
              });
 
@@ -85,10 +88,6 @@ public class Call {
                 CallCancelled callCancelled = new CallCancelled(call);
                 callCancelled.publishAfterCommit();
 
-            }else if("driveRequest".equals(call.getCallStatus())) {
-
-                CallPlaced callPlaced = new CallPlaced(call);
-                callPlaced.publishAfterCommit();
             }
 
         });

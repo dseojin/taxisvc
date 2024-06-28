@@ -46,20 +46,22 @@ public class Drive {
             repository().findById(driveId).ifPresent(data->{
                 data.setDriveStatus("start");
                 repository().save(data);
+                
+                System.out.println("4444444444##### Driver.onPostPersist  #####");
+                DriveStarted driveStarted = new DriveStarted(data);
+                driveStarted.publishAfterCommit();
             });
 
-            System.out.println("4444444444##### Driver.onPostPersist  #####");
-            DriveStarted driveStarted = new DriveStarted(this);
-            driveStarted.publishAfterCommit();
         }else {
             repository().findById(driveId).ifPresent(data->{
                 data.setDriveStatus("requestCancel");
                 repository().save(data);
+
+                System.out.println("5555555555##### Driver.onPostPersist  #####");
+                DriveNotAvailavled driveNotAvailavled = new DriveNotAvailavled(data);
+                driveNotAvailavled.publishAfterCommit();
             });
 
-            System.out.println("5555555555##### Driver.onPostPersist  #####");
-            DriveNotAvailavled driveNotAvailavled = new DriveNotAvailavled(this);
-            driveNotAvailavled.publishAfterCommit();
         }
 
     }
