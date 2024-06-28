@@ -20,11 +20,16 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "Drive_table")
 @Data
+@SequenceGenerator(
+  name = "DRIVE_SEQ_GENERATOR", 
+  sequenceName = "DRIVE_SEQ", // 매핑할 데이터베이스 시퀀스 이름 
+  initialValue = 1,
+  allocationSize = 1)
 //<<< DDD / Aggregate Root
 public class Drive {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long driveId;
 
     private String driverName;

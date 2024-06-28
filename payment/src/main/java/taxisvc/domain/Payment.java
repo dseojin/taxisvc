@@ -12,11 +12,16 @@ import taxisvc.domain.FarePaid;
 @Entity
 @Table(name = "Payment_table")
 @Data
+@SequenceGenerator(
+  name = "PAYMENT_SEQ_GENERATOR", 
+  sequenceName = "PAYMENT_SEQ", // 매핑할 데이터베이스 시퀀스 이름 
+  initialValue = 1,
+  allocationSize = 1)
 //<<< DDD / Aggregate Root
 public class Payment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long payId;
 
     private Long callId;

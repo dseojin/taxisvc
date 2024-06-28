@@ -10,10 +10,15 @@ import lombok.Data;
 @Entity
 @Table(name = "CallView_table")
 @Data
+@SequenceGenerator(
+  name = "CALLVIEW_SEQ_GENERATOR", 
+  sequenceName = "CALLVIEW_SEQ", // 매핑할 데이터베이스 시퀀스 이름 
+  initialValue = 1,
+  allocationSize = 1)
 public class CallView {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE)
     private Long id;
 
     private Long callId;

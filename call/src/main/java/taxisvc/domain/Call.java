@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
 
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.Data;
@@ -15,11 +16,16 @@ import taxisvc.domain.CallPlaced;
 @Entity
 @Table(name = "Call_table")
 @Data
+@SequenceGenerator(
+  name = "CALL_SEQ_GENERATOR", 
+  sequenceName = "CALL_SEQ", // 매핑할 데이터베이스 시퀀스 이름 
+  initialValue = 1,
+  allocationSize = 1)
 //<<< DDD / Aggregate Root
 public class Call {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long callId;
 
     private String userId;
@@ -71,17 +77,20 @@ public class Call {
         }catch(Exception e){
             System.out.println("##### /payments/pay  call  failed #####");
 
-            this.setCallStatus("payFail");
-            repository().saveAndFlush(this);
-            // repository().findById(callId).ifPresent(call->{
+            payFailSatausSave(callId);
             
-            //     call.setCallStatus("payFail");
-            //     repository().saveAndFlush(call);
-            //     //repository().save(call);
-    
-            // });
         }
 
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void payFailSatausSave(Long callId) {
+        repository().findById(callId).ifPresent(call->{
+            call.setCallStatus("payFail");
+            System.out.println("##### /payments/pay  call  failed 22222 ##### call :::::" + call);
+            repository().save(call);
+
+        });
     }
 
     @PostUpdate
