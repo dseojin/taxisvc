@@ -22,6 +22,7 @@ public class CallView {
     private Long id;
 
     private Long callId;
+    private Long driveId;
     private String callStatus;
     private String userName;
     private String driverName;

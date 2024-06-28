@@ -70,6 +70,7 @@ public class CallViewViewHandler {
             );
             for (CallView callView : callViewList) {
                 // view 객체에 이벤트의 eventDirectValue 를 set 함
+                callView.setDriveId(driveStarted.getDriveId());
                 callView.setDriverName(driveStarted.getDriverName());
                 callView.setTaxiNum(driveStarted.getTaxiNum());
                 callView.setDriveStatus(driveStarted.getDriveStatus());

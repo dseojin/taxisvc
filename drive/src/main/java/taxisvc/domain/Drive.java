@@ -45,27 +45,16 @@ public class Drive {
     @PostPersist
     @Transactional
     public void onPostPersist() {
-        BigDecimal a = new BigDecimal(1000000);
         System.out.println("3333333333##### Driver.onPostPersist  #####");
-        if((fare.compareTo(a)) != 1) {
-            repository().findById(driveId).ifPresent(data->{
-                data.setDriveStatus("start");
-                repository().save(data);
-                
-                System.out.println("4444444444##### Driver.onPostPersist  #####");
-                DriveStarted driveStarted = new DriveStarted(data);
-                driveStarted.publishAfterCommit();
-            });
+        if("start".equals(this.getDriveStatus())) {
+            System.out.println("4444444444##### Driver.onPostPersist  ##### data :::::" + this);
+            DriveStarted driveStarted = new DriveStarted(this);
+            driveStarted.publishAfterCommit();
 
-        }else {
-            repository().findById(driveId).ifPresent(data->{
-                data.setDriveStatus("requestCancel");
-                repository().save(data);
-
-                System.out.println("5555555555##### Driver.onPostPersist  #####");
-                DriveNotAvailavled driveNotAvailavled = new DriveNotAvailavled(data);
-                driveNotAvailavled.publishAfterCommit();
-            });
+        }else if("requestCancel".equals(this.getDriveStatus())) {
+            System.out.println("5555555555##### Driver.onPostPersist  ##### data ::::: " + this);
+            DriveNotAvailavled driveNotAvailavled = new DriveNotAvailavled(this);
+            driveNotAvailavled.publishAfterCommit();
 
         }
 
@@ -98,12 +87,22 @@ public class Drive {
     public static void requestDriver(FarePaid farePaid) {
 
         System.out.println("1111111111##### Driver.requestDriver  #####" + farePaid.getFare());
+
         Drive drive = new Drive();
         drive.setCallId(farePaid.getCallId());
         drive.setFare(farePaid.getFare());
         String taxiNum = String.valueOf(farePaid.getCallId() * 1111).substring(0, 4);
         drive.setTaxiNum(taxiNum);
         drive.setDriverName("driver"+taxiNum);
+
+        BigDecimal a = new BigDecimal(1000000);
+        System.out.println("3333333333##### Driver.onPostPersist  #####");
+        if((farePaid.getFare().compareTo(a)) != 1) {
+            drive.setDriveStatus("start");
+        }else {
+            drive.setDriveStatus("requestCancel");;
+        }
+
         repository().save(drive);
 
         System.out.println("2222222222##### Driver.requestDriver  #####" + drive);
