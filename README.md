@@ -2,6 +2,12 @@
 
 ## 1. 아키텍처
 ### 1.1 MSA 아키텍처 구성도
+```
+1. gateway service를 통해 단일진입이 가능하도록 라우팅 설정되었다.
+2. 택시를 요청하는 call 서비스, 결제가 이루어지는 payment 서비스, 드라이브 데이터를 관리하는 drive 서비스로 구성되어있고
+call 서비스와 drive 서비스의 상세 모델을 참조하여 callView 서비스를 만들어 CQRS를 적용하였다.
+3. Istio 서비스 메쉬를 활용하여 모니터링 툴 그라파나를 사용하였다.
+```
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/4e685e32-3e15-456a-9a30-f92b8b7ce571)
 
 
@@ -51,7 +57,8 @@ gateway : 8088
 - 운행불가
 ```
 1. 거리 기준 초과로 드라이버 배정 불가 시 'driveNotAvaliabled' 이벤트를 Pub 한다
-2. call 모듈에서 'driveNotAvaliabled' 이벤트 수신 시 call 상태를 requestCancel로 변경 후 pay cancel 로직을 수행한다.
+2. call 모듈에서 'driveNotAvaliabled' 이벤트 수신 시 call 상태를 requestCancel로 변경 후 'callCancelled' 이벤트를 발행한다.
+3. payment 모듈에서 'callCancelled' 이벤트 Sub 시 pay cancel 로직을 수행한다.
 ```
  - call 1건 등록 완료.(callID = 3)
  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/fdcaba92-bf4d-487d-82de-b3ee9737eab9)
