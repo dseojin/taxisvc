@@ -7,10 +7,10 @@
 
 ## 2. 모델링
 ### 2.1 이벤트 스토밍
-![image](https://github.com/dseojin/taxisvc/assets/173647509/07756d1f-759e-4a14-a73b-95d849029869)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/23bc009d-8397-4411-9ced-4703c4662eb7)
+
 
 ## 3. 구현
-### 3.1 분산트랜잭션
 ```
 call : 8082
 payment : 8083
@@ -18,8 +18,8 @@ drive : 8084
 callView(CQRS) : 8085
 gateway : 8088
 ```
-
-- 택시 call 
+### 3.1 분산트랜잭션
+- 택시 call 이벤트 드리븐한 플로우
 1. user가 택시 call 선택 시 'callPlaced' 이벤트가 Pub 된다.
 2. payment 모듈에서 'callPlaced' 이벤트 수신 시 결제 로직이 수행되고, 결제가 완료되면 'farePaid' 이벤트를 Pub 한다
 3. drive 모듈에서 'farePaid' 이벤트 수신 시 'driveStarted' 이벤트를 Pub 한다.
@@ -29,7 +29,7 @@ gateway : 8088
    - kafka - 콜요청, 요금지불, 드라이브시작 이벤트 발행 확인됨 :::
    ![image](https://github.com/dseojin/taxisvc/assets/173647509/73771fba-cbf6-4b79-822c-6a7e31bd3453)
 
-- 운행종료
+- 운행종료 로직의 이벤트 드리븐한 플로우
 1. 운행이 종료되어 driver가 운행종료 선택 시 'driveEnded' 이벤트가 Pub 된다.
 2. call 모듈에서 'driveEnded' 이벤트를 Sub 할 경우 callStatus를 'driveComplete'로 바꾼다
    - end http - drive 종료 수행 :::
