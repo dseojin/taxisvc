@@ -94,11 +94,7 @@ public class PolicyHandler {
         // 요금지불 이벤트가 생성되면
         // 드라이브시작 이벤트 발행
         FarePaid event = farePaid;
-        System.out.println(
-            "\n\n##### listener RequestDriver : " + farePaid + "\n\n"
-        );
 
-        // Sample Logic //
         Drive.requestDriver(event);
     }
 }
@@ -135,8 +131,6 @@ public class Drive {
     @Transactional
     public static void requestDriver(FarePaid farePaid) {
 
-        System.out.println("1111111111##### Driver.requestDriver  #####" + farePaid.getFare());
-
         Drive drive = new Drive();
         drive.setCallId(farePaid.getCallId());
         drive.setFare(farePaid.getFare());
@@ -145,7 +139,7 @@ public class Drive {
         drive.setDriverName("driver"+taxiNum);
 
         BigDecimal a = new BigDecimal(1000000);
-        System.out.println("3333333333##### Driver.onPostPersist  #####");
+
         if((farePaid.getFare().compareTo(a)) != 1) {
             drive.setDriveStatus("start");
         }else {
@@ -153,9 +147,6 @@ public class Drive {
         }
 
         repository().save(drive);
-
-        System.out.println("2222222222##### Driver.requestDriver  #####" + drive);
-
     }
 
 }
@@ -164,9 +155,8 @@ public class Drive {
 ```
 - 택시 call 수행 시 이벤트 드리븐한 플로우로 수행된다.
 ```
-1. user가 택시 call 선택 시 'callPlaced' 이벤트가 Pub 된다.
-2. payment 모듈에서 'callPlaced' 이벤트 수신 시 결제 로직이 수행되고, 결제가 완료되면 'farePaid' 이벤트를 Pub 한다
-3. drive 모듈에서 'farePaid' 이벤트 수신 시 'driveStarted' 이벤트를 Pub 한다.
+1. user가 택시 call 선택 시 payment 서비스의 결제 로직이 수행되고, 결제가 완료되면 'farePaid' 이벤트를 Pub 한다
+2. drive 모듈에서 'farePaid' 이벤트 수신 시 드라이브 데이터 변경 & 'driveStarted' 이벤트를 Pub 한다.
 ```
    - http 명령어를 사용하여 사용자ID, 사용자명, 거리 데이터를 넘겨 call 1건을 등록한다
    - ![image](https://github.com/dseojin/taxisvc/assets/173647509/2028714f-a841-487a-9bfc-c200db727e97)
