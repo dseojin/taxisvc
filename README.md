@@ -1,27 +1,30 @@
 # CALL TAXI SERVICE
 
-## MSA 아키텍처 구성도
+## 1. 아키텍처
+### 1.1 MSA 아키텍처 구성도
 
 
-## 이벤트 스토밍
+## 2. 모델링
+### 2.1 이벤트 스토밍
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/07756d1f-759e-4a14-a73b-95d849029869)
 
-## 분산트랜잭션
+## 3. 구현
+### 3.1 분산트랜잭션
 
-## 보상처리
-### 거리가 너무 멀어 드라이버 배정 불가 시 call status가 'cancel'로 변경됨
+### 3.2 보상처리
+#### 거리가 너무 멀어 드라이버 배정 불가 시 call status가 'cancel'로 변경됨
 
-## 단일진입점 : Gateway 서비스를 구현
-### call 서비스 호출 (port 8082)
+### 3.3 단일진입점 : Gateway 서비스를 구현
+#### call 서비스 호출 (port 8082)
 
-### gateway port로 call 서비스 호출 (port 8088)
+#### gateway port로 call 서비스 호출 (port 8088)
 
-## 분산 데이터 프로젝션
-### callView 서비스를 호출하여 call, drive 데이터 확인
+### 3.4 분산 데이터 프로젝션 (CQRS)
+#### callView 서비스를 호출하여 call, drive 데이터 확인
 
-### drive 서비스를 down 후
+#### drive 서비스를 down 후
 
-### callView 서비스를 호출 시 정상으로 call, drive 데이터 확인 가능
+#### callView 서비스를 호출 시 정상으로 call, drive 데이터 확인 가능
 
 
 
