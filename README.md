@@ -68,9 +68,11 @@ gateway : 8088
 - 운행종료
 1. 운행이 종료되어 driver가 운행종료 선택 시 'driveEnded' 이벤트가 Pub 된다.
    - end http :::
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/ff3e31cc-5928-4fd7-bc8c-79bb05985819)
 
-
-- 
+   - kafka :::
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/1d9d9e84-bbbd-4cc9-ad24-a9f538f50257)
+ 
 
 ### 3.2 보상처리
 - 운행불가
@@ -92,6 +94,62 @@ gateway : 8088
 
 ### 3.4 분산 데이터 프로젝션 (CQRS)
 - call 1건을 등록한 후, CallView 의 내용을 확인한다
+  - callView :::
+    ![image](https://github.com/dseojin/taxisvc/assets/173647509/e0d4eac9-bccf-4149-a138-5c6b2e972ac6)
+   ```
+   gitpod /workspace/taxisvc (main) $ http :8085/callViews
+   HTTP/1.1 200 
+   Connection: keep-alive
+   Content-Type: application/hal+json
+   Date: Mon, 01 Jul 2024 04:00:46 GMT
+   Keep-Alive: timeout=60
+   Transfer-Encoding: chunked
+   Vary: Origin
+   Vary: Access-Control-Request-Method
+   Vary: Access-Control-Request-Headers
+   
+   {
+       "_embedded": {
+           "callViews": [
+               {
+                   "_links": {
+                       "callView": {
+                           "href": "http://localhost:8085/callViews/1"
+                       },
+                       "self": {
+                           "href": "http://localhost:8085/callViews/1"
+                       }
+                   },
+                   "callId": 1,
+                   "callStatus": "driveRequest",
+                   "driveId": 1,
+                   "driveStatus": "start",
+                   "driverName": "driver1111",
+                   "taxiNum": "1111",
+                   "userName": "nana"
+               }
+           ]
+       },
+       "_links": {
+           "profile": {
+               "href": "http://localhost:8085/profile/callViews"
+           },
+           "search": {
+               "href": "http://localhost:8085/callViews/search"
+           },
+           "self": {
+               "href": "http://localhost:8085/callViews"
+           }
+       },
+       "page": {
+           "number": 0,
+           "size": 20,
+           "totalElements": 1,
+           "totalPages": 1
+       }
+   }
+
+   ```
 
 - drive 서비스(8084)를 다운시킨 다음, CallView 의 내용을 확인하여도 서비스가 안정적임을 확인한다.
 
