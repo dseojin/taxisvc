@@ -24,7 +24,7 @@ spring:
         - id: mypage
           uri: http://localhost:8085
           predicates:
-            - Path=, 
+            - Path=/callViews/**, 
         - id: frontend
           uri: http://localhost:8080
           predicates:
@@ -64,7 +64,7 @@ spring:
         - id: mypage
           uri: http://mypage:8080
           predicates:
-            - Path=, 
+            - Path=/callViews/**, 
         - id: frontend
           uri: http://frontend:8080
           predicates:
