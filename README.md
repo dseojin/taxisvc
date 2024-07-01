@@ -20,40 +20,46 @@ gateway : 8088
 ```
 ### 3.1 분산트랜잭션
 - 택시 call 이벤트 드리븐한 플로우
+```
 1. user가 택시 call 선택 시 'callPlaced' 이벤트가 Pub 된다.
 2. payment 모듈에서 'callPlaced' 이벤트 수신 시 결제 로직이 수행되고, 결제가 완료되면 'farePaid' 이벤트를 Pub 한다
 3. drive 모듈에서 'farePaid' 이벤트 수신 시 'driveStarted' 이벤트를 Pub 한다.
-   - call http 수행
+```
+   - http 명령어를 사용하여 사용자ID, 사용자명, 거리 데이터를 넘겨 call 1건을 등록한다
    - ![image](https://github.com/dseojin/taxisvc/assets/173647509/2028714f-a841-487a-9bfc-c200db727e97)
 
-   - kafka - 콜요청, 요금지불, 드라이브시작 이벤트 발행 확인됨
+   - kafka client 확인 시 콜요청, 요금지불, 드라이브시작 이벤트 발행이 확인된다
    - ![image](https://github.com/dseojin/taxisvc/assets/173647509/73771fba-cbf6-4b79-822c-6a7e31bd3453)
 
 - 운행종료 로직의 이벤트 드리븐한 플로우
+```
 1. 운행이 종료되어 driver가 운행종료 선택 시 'driveEnded' 이벤트가 Pub 된다.
 2. call 모듈에서 'driveEnded' 이벤트를 Sub 할 경우 callStatus를 'driveComplete'로 바꾼다
-   - end http - drive 종료 수행
+```
+   - /drives/end url에 드라이브ID를 전달하여 해당 드라이브ID를 운행종료시킨다.
    - ![image](https://github.com/dseojin/taxisvc/assets/173647509/ff3e31cc-5928-4fd7-bc8c-79bb05985819)
 
-   - kafka - drive 종료 이벤트 발행됨
+   - kafka client 확인 시 drive 종료 이벤트 발행이 확인된다.
    - ![image](https://github.com/dseojin/taxisvc/assets/173647509/1d9d9e84-bbbd-4cc9-ad24-a9f538f50257)
 
-   - call http - call 상태 확인 시 driveComplete 로 변경됨
+   - 운행종료 이후 call 상태 확인 시 'driveComplete' 로 변경이 확인된다.
    - ![image](https://github.com/dseojin/taxisvc/assets/173647509/232d19c1-7023-4539-9e52-3641b47ec47e)
 
  
 
 ### 3.2 보상처리
 - 운행불가
+```
 1. 거리 기준 초과로 드라이버 배정 불가 시 'driveNotAvaliabled' 이벤트를 Pub 한다
 2. call 모듈에서 'driveNotAvaliabled' 이벤트 수신 시 call 상태를 requestCancel로 변경 후 pay cancel 로직을 수행한다.
- - call 1건 등록 - callID = 3 :::
+```
+ - call 1건 등록 완료.(callID = 3)
  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/fdcaba92-bf4d-487d-82de-b3ee9737eab9)
 
- - kafka - callId 3번 드라이버 배정 불가 이벤트 :::
+ - kafka client 확인 시 callId 3번에 드라이버 배정 불가 이벤트가 발행됨을 확인한다.
  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/44c4bb7b-8d3f-4222-900e-866acd271957)
 
- - call status - call 의 상태가 요청취소로 변경됨:::
+ - 드라이버 배정 불가함에 따라 call 상태가 요청취소로 변경됨을 확인한다.
  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/9a407dd0-9d1d-4018-af45-db16d16e2a75)
 
 ### 3.3 단일진입점 : Gateway 서비스를 구현
