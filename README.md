@@ -5,7 +5,7 @@
 ```
 1. gateway service를 통해 단일진입이 가능하도록 라우팅 설정되었다.
 2. 택시를 요청하는 call 서비스, 결제가 이루어지는 payment 서비스, 드라이브 데이터를 관리하는 drive 서비스로 구성되어있고
-call 서비스와 drive 서비스의 상세 모델을 참조하여 callView 서비스를 만들어 CQRS를 적용하였다.
+call 서비스와 drive 서비스의 상세 모델을 참조하여 calldashboard(callView) 서비스를 만들어 CQRS를 적용하였다.
 3. Istio 서비스 메쉬를 활용하여 모니터링 툴 그라파나를 사용하였다.
 ```
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/4e685e32-3e15-456a-9a30-f92b8b7ce571)
