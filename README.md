@@ -91,12 +91,16 @@ gateway : 8088
 
 ### 3.4 분산 데이터 프로젝션 (CQRS)
 - call 1건을 등록한 후, CallView 의 내용을 확인한다
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/771915ac-7a86-491f-8aec-2d02232e12bb)
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/2a8dd5ef-b2e9-4e94-9cb3-b5adc2d59b72)
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/c197c087-f43a-4504-b593-345ba76192fe)
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/24f35b38-b755-4e90-b96f-3604cdcebfd4)
+
+
+
 
 - drive 서비스(8084)를 다운시킨 다음, CallView 의 내용을 확인하여도 서비스가 안정적임을 확인한다.
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/2ea8f200-0c9f-4540-ad19-c4096dff6dd5)
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/1206f070-4322-4c5e-b059-03a10c1e122c)
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/a5fafba3-eb12-4bc6-8a56-73b30787e0d8)
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/8e9cf889-c527-43be-8801-fae50ab467f3)
+
 
 
 
