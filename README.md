@@ -202,14 +202,18 @@ public class Drive {
 2. call 모듈에서 'driveNotAvaliabled' 이벤트 수신 시 call 상태를 requestCancel로 변경 후 'callCancelled' 이벤트를 발행한다.
 3. payment 모듈에서 'callCancelled' 이벤트 Sub 시 pay cancel 로직을 수행한다.
 ```
- - call 1건 등록 완료.(callID = 3)
- - ![image](https://github.com/dseojin/taxisvc/assets/173647509/fdcaba92-bf4d-487d-82de-b3ee9737eab9)
+ - call 1건 등록 완료.(callID = 2)
+ - ![image](https://github.com/dseojin/taxisvc/assets/173647509/657da825-40ce-4a86-9ea7-45a31b6c4456)
 
- - kafka client 확인 시 callId 3번에 드라이버 배정 불가 이벤트가 발행됨을 확인한다.
- - ![image](https://github.com/dseojin/taxisvc/assets/173647509/44c4bb7b-8d3f-4222-900e-866acd271957)
+ - kafka client 확인 시 callId 2번에 드라이버 배정 불가 이벤트가 발행됨을 확인한다.
+ - ![image](https://github.com/dseojin/taxisvc/assets/173647509/ca7f80ed-8d58-4c06-9b57-1015815de978)
 
  - 드라이버 배정 불가함에 따라 call 상태가 요청취소로 변경됨을 확인한다.
- - ![image](https://github.com/dseojin/taxisvc/assets/173647509/9a407dd0-9d1d-4018-af45-db16d16e2a75)
+ - ![image](https://github.com/dseojin/taxisvc/assets/173647509/00e2fb60-3c24-484b-9ebd-3e5db5e5e795)
+
+ - callCancelled 이벤트를 수신한 payment 서비스는 결제 취소 로직을 수행한다. (로직은 log로 대체)
+ - ![image](https://github.com/dseojin/taxisvc/assets/173647509/9dd7135b-1783-428c-8946-45275cbd97f1)
+
 
 
 ### 3.3 단일진입점 : Gateway 서비스를 구현
