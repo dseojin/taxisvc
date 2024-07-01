@@ -40,6 +40,128 @@ callView(CQRS) : 8085
 gateway : 8088
 ```
 ### 3.1 분산트랜잭션
+```
+//마이크로 서비스간의 통신에서 이벤트 메세지를 Pub/Sub 하여 분산 트랜젝션을 구현하였다.
+//payment 서비스에서 결제가 완료되면 Payment Aggregate에 insert가 발생하고
+// @PostPersist를 통해 post 발생 시 'farePaid' 이벤트를 발행하도록 구현하였다.
+// Payment.java
+package taxisvc.domain;
+
+@Entity
+@Table(name = "Payment_table")
+@Data
+@SequenceGenerator(
+  name = "PAYMENT_SEQ_GENERATOR", 
+  sequenceName = "PAYMENT_SEQ", // 매핑할 데이터베이스 시퀀스 이름 
+  initialValue = 1,
+  allocationSize = 1)
+//<<< DDD / Aggregate Root
+public class Payment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long payId;
+
+    private Long callId;
+
+    private BigDecimal fare;
+
+    @PostPersist
+    public void onPostPersist() {
+        FarePaid farePaid = new FarePaid(this);
+        farePaid.publishAfterCommit();
+    }
+
+// 'farePaid' 이벤트를 수신한 drive에서 policy를 통해 운행을 시작하는 로직을 구현하였다.
+// drive/src/main/java/taxisvc/infra/PolicyHandler.java
+package taxisvc.infra;
+
+@Service
+@Transactional
+public class PolicyHandler {
+
+    @Autowired
+    DriveRepository driveRepository;
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whatever(@Payload String eventString) {}
+
+    @StreamListener(
+        value = KafkaProcessor.INPUT,
+        condition = "headers['type']=='FarePaid'"
+    )
+    public void wheneverFarePaid_RequestDriver(@Payload FarePaid farePaid) {
+        // 요금지불 이벤트가 생성되면
+        // 드라이브시작 이벤트 발행
+        FarePaid event = farePaid;
+        System.out.println(
+            "\n\n##### listener RequestDriver : " + farePaid + "\n\n"
+        );
+
+        // Sample Logic //
+        Drive.requestDriver(event);
+    }
+}
+
+// 로직은 Drive Aggregate에 구현
+//drive/src/main/java/taxisvc/domain/Drive.java
+package taxisvc.domain;
+
+@Entity
+@Table(name = "Drive_table")
+@Data
+@SequenceGenerator(
+  name = "DRIVE_SEQ_GENERATOR", 
+  sequenceName = "DRIVE_SEQ", // 매핑할 데이터베이스 시퀀스 이름 
+  initialValue = 1,
+  allocationSize = 1)
+//<<< DDD / Aggregate Root
+public class Drive {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long driveId;
+
+    private String driverName;
+
+    private Long callId;
+
+    private String driveStatus;
+
+    private String taxiNum;
+
+    private BigDecimal fare;
+...
+    @Transactional
+    public static void requestDriver(FarePaid farePaid) {
+
+        System.out.println("1111111111##### Driver.requestDriver  #####" + farePaid.getFare());
+
+        Drive drive = new Drive();
+        drive.setCallId(farePaid.getCallId());
+        drive.setFare(farePaid.getFare());
+        String taxiNum = String.valueOf(farePaid.getCallId() * 1111).substring(0, 4);
+        drive.setTaxiNum(taxiNum);
+        drive.setDriverName("driver"+taxiNum);
+
+        BigDecimal a = new BigDecimal(1000000);
+        System.out.println("3333333333##### Driver.onPostPersist  #####");
+        if((farePaid.getFare().compareTo(a)) != 1) {
+            drive.setDriveStatus("start");
+        }else {
+            drive.setDriveStatus("requestCancel");;
+        }
+
+        repository().save(drive);
+
+        System.out.println("2222222222##### Driver.requestDriver  #####" + drive);
+
+    }
+
+}
+
+
+```
 - 택시 call 수행 시 이벤트 드리븐한 플로우로 수행된다.
 ```
 1. user가 택시 call 선택 시 'callPlaced' 이벤트가 Pub 된다.
