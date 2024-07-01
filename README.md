@@ -15,20 +15,14 @@
 1. user가 택시 call 선택 시 'callPlaced' 이벤트가 Pub 된다.
 2. payment 모듈에서 'callPlaced' 이벤트 수신 시 결제 로직이 수행되고, 결제가 완료되면 'farePaid' 이벤트를 Pub 한다
 3. drive 모듈에서 'farePaid' 이벤트 수신 시 'driveStarted' 이벤트를 Pub 한다.
-   - call ::
+   - call http ::: http post localhost:8082/calls userId=1 userName=nana distance=20
 
 
-   - kafka ::
+   - kafka :::
 
 - 운행종료
 1. 운행이 종료되어 driver가 운행종료 선택 시 'driveEnded' 이벤트가 Pub 된다.
-
-- 운행불가
-
-- drive 모듈에서 'farePaid' 이벤트 수신 시 요청 거리에 따라 'driveStarted', 'driveNotAvaliabled' 이벤트를 Pub 한다
-
-
-- 운행이 종료되어 driver가 운행종료 선택 시 'driveEnded' 이벤트가 Pub 된다.
+   - end http :::
 
 
 - 
