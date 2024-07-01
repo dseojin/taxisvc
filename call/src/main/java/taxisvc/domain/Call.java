@@ -59,8 +59,9 @@ public class Call {
             this.setCallStatus("driveRequest");
             repository().save(this);
 
-            // CallPlaced callPlaced = new CallPlaced(this);
-            // callPlaced.publishAfterCommit();
+            // CQRS를 위해 이벤트 발행이 필요하다
+            CallPlaced callPlaced = new CallPlaced(this);
+            callPlaced.publishAfterCommit();
 
             System.out.println("##### /payments/pay  call 3 #####");
 
