@@ -11,21 +11,52 @@
 
 ## 3. 구현
 ### 3.1 분산트랜잭션
+- 택시 call 
+1. user가 택시 call 선택 시 'callPlaced' 이벤트가 Pub 된다.
+2. payment 모듈에서 'callPlaced' 이벤트 수신 시 결제 로직이 수행되고, 결제가 완료되면 'farePaid' 이벤트를 Pub 한다
+3. drive 모듈에서 'farePaid' 이벤트 수신 시 'driveStarted' 이벤트를 Pub 한다.
+call ::
+
+
+kafka ::
+
+- 운행종료
+1. 운행이 종료되어 driver가 운행종료 선택 시 'driveEnded' 이벤트가 Pub 된다.
+
+- 운행불가
+
+- drive 모듈에서 'farePaid' 이벤트 수신 시 요청 거리에 따라 'driveStarted', 'driveNotAvaliabled' 이벤트를 Pub 한다
+
+
+- 운행이 종료되어 driver가 운행종료 선택 시 'driveEnded' 이벤트가 Pub 된다.
+
+
+- 
 
 ### 3.2 보상처리
-#### 거리가 너무 멀어 드라이버 배정 불가 시 call status가 'cancel'로 변경됨
+- 운행불가
+1. 거리가 너무 멀어 드라이버 배정 불가 시 'driveNotAvaliabled' 이벤트를 Pub 한다
+2. call 모듈에서 'driveNotAvaliabled' 이벤트 수신 시 call 상태를 requestCancel로 변경한다.
+kafka ::
+
+
+call status ::
+
+
 
 ### 3.3 단일진입점 : Gateway 서비스를 구현
-#### call 서비스 호출 (port 8082)
+- call 서비스 호출 (port 8082)
+- drive 서비스 호출 (port 8084)
 
-#### gateway port로 call 서비스 호출 (port 8088)
+- gateway port로 call 서비스 호출 (port 8088)
+- gateway port로 drive 서비스 호출 (port 8088)
 
 ### 3.4 분산 데이터 프로젝션 (CQRS)
-#### callView 서비스를 호출하여 call, drive 데이터 확인
+- callView 서비스를 호출하여 call, drive 데이터 확인
 
-#### drive 서비스를 down 후
+- drive 서비스를 down 후
 
-#### callView 서비스를 호출 시 정상으로 call, drive 데이터 확인 가능
+- callView 서비스를 호출 시 정상으로 call, drive 데이터 확인 가능
 
 
 
