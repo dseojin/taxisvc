@@ -59,20 +59,10 @@ public class Call {
             this.setCallStatus("driveRequest");
             repository().save(this);
 
-            CallPlaced callPlaced = new CallPlaced(this);
-            callPlaced.publishAfterCommit();
-            
-            // repository().findById(callId).ifPresent(call->{
-            
-            //     call.setCallStatus("driveRequest");
-            //     repository().save(call);
+            // CallPlaced callPlaced = new CallPlaced(this);
+            // callPlaced.publishAfterCommit();
 
-            //     CallPlaced callPlaced = new CallPlaced(call);
-            //     callPlaced.publishAfterCommit();
-                
-            //  });
-
-             System.out.println("##### /payments/pay  call 3 #####");
+            System.out.println("##### /payments/pay  call 3 #####");
 
         }catch(Exception e){
             System.out.println("##### /payments/pay  call  failed #####");
