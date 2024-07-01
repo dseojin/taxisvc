@@ -13,7 +13,11 @@ call 서비스와 drive 서비스의 상세 모델을 참조하여 calldashboard
 
 ## 2. 모델링
 ### 2.1 이벤트 스토밍
-![image](https://github.com/dseojin/taxisvc/assets/173647509/23bc009d-8397-4411-9ced-4703c4662eb7)
+```
+
+```
+![image](https://github.com/dseojin/taxisvc/assets/173647509/606bc341-bb25-4f6c-b1bf-8f366cb32a7a)
+
 
 
 ## 3. 구현
