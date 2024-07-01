@@ -29,8 +29,8 @@
 
 ### 3.2 보상처리
 - 운행불가
-1. 거리가 너무 멀어 드라이버 배정 불가 시 'driveNotAvaliabled' 이벤트를 Pub 한다
-2. call 모듈에서 'driveNotAvaliabled' 이벤트 수신 시 call 상태를 requestCancel로 변경한다.
+1. 거리 기준 초과로 드라이버 배정 불가 시 'driveNotAvaliabled' 이벤트를 Pub 한다
+2. call 모듈에서 'driveNotAvaliabled' 이벤트 수신 시 call 상태를 requestCancel로 변경 후 pay cancel 로직을 수행한다.
  - kafka ::
 
 
@@ -46,11 +46,9 @@
 - gateway port로 drive 서비스 호출 (port 8088)
 
 ### 3.4 분산 데이터 프로젝션 (CQRS)
-- callView 서비스를 호출하여 call, drive 데이터 확인
+- call 1건을 등록한 후, CallView 의 내용을 확인한다
 
-- drive 서비스를 down 후
-
-- callView 서비스를 호출 시 정상으로 call, drive 데이터 확인 가능
+- drive 서비스(8084)를 다운시킨 다음, CallView 의 내용을 확인하여도 서비스가 안정적임을 확인한다.
 
 
 
