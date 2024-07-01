@@ -44,7 +44,7 @@ gateway : 8088
 //마이크로 서비스간의 통신에서 이벤트 메세지를 Pub/Sub 하여 분산 트랜젝션을 구현하였다.
 //payment 서비스에서 결제가 완료되면 Payment Aggregate에 insert가 발생하고
 // @PostPersist를 통해 post 발생 시 'farePaid' 이벤트를 발행하도록 구현하였다.
-// Payment.java
+// payment/src/main/java/taxisvc/domain/Payment.java
 package taxisvc.domain;
 
 @Entity
@@ -92,7 +92,7 @@ public class PolicyHandler {
     )
     public void wheneverFarePaid_RequestDriver(@Payload FarePaid farePaid) {
         // 요금지불 이벤트가 생성되면
-        // 드라이브시작 이벤트 발행
+        // 드라이브시작 로직 수행
         FarePaid event = farePaid;
 
         Drive.requestDriver(event);
@@ -127,6 +127,24 @@ public class Drive {
     private String taxiNum;
 
     private BigDecimal fare;
+...
+
+    @PostPersist
+    @Transactional
+    public void onPostPersist() {
+
+        if("start".equals(this.getDriveStatus())) {
+            DriveStarted driveStarted = new DriveStarted(this);
+            driveStarted.publishAfterCommit();
+
+        }else if("requestCancel".equals(this.getDriveStatus())) {
+            DriveNotAvailavled driveNotAvailavled = new DriveNotAvailavled(this);
+            driveNotAvailavled.publishAfterCommit();
+
+        }
+
+    }
+
 ...
     @Transactional
     public static void requestDriver(FarePaid farePaid) {
