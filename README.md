@@ -10,7 +10,6 @@ call 서비스와 drive 서비스의 상세 모델을 참조하여 calldashboard
 ```
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/4e685e32-3e15-456a-9a30-f92b8b7ce571)
 
-
 ## 2. 모델링
 ### 2.1 이벤트 스토밍
 ```
@@ -31,8 +30,6 @@ call 서비스와 drive 서비스의 상세 모델을 참조하여 calldashboard
 ```
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/606bc341-bb25-4f6c-b1bf-8f366cb32a7a)
 
-
-
 ## 3. 구현
 ```
 call : 8082
@@ -42,7 +39,7 @@ callView(CQRS) : 8085
 gateway : 8088
 ```
 ### 3.1 분산트랜잭션
-- 택시 call 이벤트 드리븐한 플로우
+- 택시 call 수행 시 이벤트 드리븐한 플로우로 수행된다.
 ```
 1. user가 택시 call 선택 시 'callPlaced' 이벤트가 Pub 된다.
 2. payment 모듈에서 'callPlaced' 이벤트 수신 시 결제 로직이 수행되고, 결제가 완료되면 'farePaid' 이벤트를 Pub 한다
@@ -54,7 +51,7 @@ gateway : 8088
    - kafka client 확인 시 콜요청, 요금지불, 드라이브시작 이벤트 발행이 확인된다
    - ![image](https://github.com/dseojin/taxisvc/assets/173647509/73771fba-cbf6-4b79-822c-6a7e31bd3453)
 
-- 운행종료 로직의 이벤트 드리븐한 플로우
+- 운행종료 수행 시 이벤트 드리븐한 플로우로 수행된다.
 ```
 1. 운행이 종료되어 driver가 운행종료 선택 시 'driveEnded' 이벤트가 Pub 된다.
 2. call 모듈에서 'driveEnded' 이벤트를 Sub 할 경우 callStatus를 'driveComplete'로 바꾼다
@@ -68,10 +65,8 @@ gateway : 8088
    - 운행종료 이후 call 상태 확인 시 'driveComplete' 로 변경이 확인된다.
    - ![image](https://github.com/dseojin/taxisvc/assets/173647509/232d19c1-7023-4539-9e52-3641b47ec47e)
 
- 
-
 ### 3.2 보상처리
-- 운행불가
+- 비즈니스 예외 케이스로 운행불가 시 call의 상태 변경을 통해 데이터를 동기화한다.
 ```
 1. 거리 기준 초과로 드라이버 배정 불가 시 'driveNotAvaliabled' 이벤트를 Pub 한다
 2. call 모듈에서 'driveNotAvaliabled' 이벤트 수신 시 call 상태를 requestCancel로 변경 후 'callCancelled' 이벤트를 발행한다.
