@@ -24,22 +24,22 @@ gateway : 8088
 2. payment 모듈에서 'callPlaced' 이벤트 수신 시 결제 로직이 수행되고, 결제가 완료되면 'farePaid' 이벤트를 Pub 한다
 3. drive 모듈에서 'farePaid' 이벤트 수신 시 'driveStarted' 이벤트를 Pub 한다.
    - call http ::: http post localhost:8082/calls userId=1 userName=nana distance=20
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/2028714f-a841-487a-9bfc-c200db727e97)
+     ![image](https://github.com/dseojin/taxisvc/assets/173647509/2028714f-a841-487a-9bfc-c200db727e97)
 
    - kafka - 콜요청, 요금지불, 드라이브시작 이벤트 발행 확인됨 :::
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/73771fba-cbf6-4b79-822c-6a7e31bd3453)
+     ![image](https://github.com/dseojin/taxisvc/assets/173647509/73771fba-cbf6-4b79-822c-6a7e31bd3453)
 
 - 운행종료 로직의 이벤트 드리븐한 플로우
 1. 운행이 종료되어 driver가 운행종료 선택 시 'driveEnded' 이벤트가 Pub 된다.
 2. call 모듈에서 'driveEnded' 이벤트를 Sub 할 경우 callStatus를 'driveComplete'로 바꾼다
    - end http - drive 종료 수행 :::
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/ff3e31cc-5928-4fd7-bc8c-79bb05985819)
+     ![image](https://github.com/dseojin/taxisvc/assets/173647509/ff3e31cc-5928-4fd7-bc8c-79bb05985819)
 
    - kafka - drive 종료 이벤트 발행됨 :::
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/1d9d9e84-bbbd-4cc9-ad24-a9f538f50257)
+     ![image](https://github.com/dseojin/taxisvc/assets/173647509/1d9d9e84-bbbd-4cc9-ad24-a9f538f50257)
 
    - call http - call 상태 확인 시 driveComplete 로 변경됨:::
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/232d19c1-7023-4539-9e52-3641b47ec47e)
+     ![image](https://github.com/dseojin/taxisvc/assets/173647509/232d19c1-7023-4539-9e52-3641b47ec47e)
 
  
 
