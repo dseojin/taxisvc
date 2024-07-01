@@ -91,11 +91,32 @@ gateway : 8088
 
 ### 3.4 분산 데이터 프로젝션 (CQRS)
 - call 1건을 등록한 후, CallView 의 내용을 확인한다
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/e0d4eac9-bccf-4149-a138-5c6b2e972ac6)
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/771915ac-7a86-491f-8aec-2d02232e12bb)
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/2a8dd5ef-b2e9-4e94-9cb3-b5adc2d59b72)
 
 - drive 서비스(8084)를 다운시킨 다음, CallView 의 내용을 확인하여도 서비스가 안정적임을 확인한다.
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/f13f1409-3ce3-43d5-81ed-002259665ade)
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/2ea8f200-0c9f-4540-ad19-c4096dff6dd5)
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/1206f070-4322-4c5e-b059-03a10c1e122c)
 
+
+
+
+```
+//로컬 카프카
+cd infra
+docker-compose exec -it kafka /bin/bash
+cd /bin
+./kafka-console-consumer --bootstrap-server http://localhost:9092 --topic taxisvc --from-beginning
+
+//클러스터에 Event Store(kafka) 설치
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
+chmod 700 get_helm.sh
+./get_helm.sh
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm install my-kafka bitnami/kafka --version 23.0.5
+
+```
 
 # 
 
