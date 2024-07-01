@@ -2,6 +2,7 @@
 
 ## 1. 아키텍처
 ### 1.1 MSA 아키텍처 구성도
+![image](https://github.com/dseojin/taxisvc/assets/173647509/4e685e32-3e15-456a-9a30-f92b8b7ce571)
 
 
 ## 2. 모델링
