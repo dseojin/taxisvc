@@ -8,7 +8,8 @@
 call 서비스와 drive 서비스의 상세 모델을 참조하여 calldashboard(callView) 서비스를 만들어 CQRS를 적용하였다.
 3. Istio 서비스 메쉬를 활용하여 모니터링 툴 그라파나를 사용하였다.
 ```
-![image](https://github.com/dseojin/taxisvc/assets/173647509/4e685e32-3e15-456a-9a30-f92b8b7ce571)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/9c2ed0d4-61b9-4555-8148-1c94bb9bd10f)
+
 
 ## 2. 모델링
 ### 2.1 이벤트 스토밍
