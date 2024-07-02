@@ -323,6 +323,121 @@ public class CallViewViewHandler {
 
 ## 4. 운영
 ### 4.1 클라우드 배포 - Container 운영
+#### - ECR 생성 후 ECR에 이미지 배포
+  ```
+  docker build -t 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/call:v1 .
+  docker push 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/call:v1
+  ```
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/ab207f7a-6087-431d-b154-3fae933c79ff)
+
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/c9838086-a7e8-4ae6-8a28-2ef84dee3c87)
+
+
+#### buildspec-kubectl.yml 적용
+  ```
+  version: 0.2
+    
+  env:
+    variables:
+      _PROJECT_NAME: "user07-call"
+  
+  phases:
+    install:
+      runtime-versions:
+        java: corretto17
+        docker: 20
+      commands:
+        - echo install kubectl
+        - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+        - chmod +x ./kubectl
+        - mv ./kubectl /usr/local/bin/kubectl
+    pre_build:
+      commands:
+        - echo Logging in to Amazon ECR...
+        - echo $_PROJECT_NAME
+        - echo $AWS_ACCOUNT_ID
+        - echo $AWS_DEFAULT_REGION
+        - echo $CODEBUILD_RESOLVED_SOURCE_VERSION
+        - echo start command
+        - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+    build:
+      commands:
+        - echo Build started on `date`
+        - echo Building the Docker image...
+        - mvn package -Dmaven.test.skip=true
+        - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$_PROJECT_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION  .
+    post_build:
+      commands:
+        - echo Pushing the Docker image...
+        - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$_PROJECT_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
+        - echo connect kubectl
+        - kubectl config set-cluster k8s --server="$KUBE_URL" --insecure-skip-tls-verify=true
+        - kubectl config set-credentials admin --token="$KUBE_TOKEN"
+        - kubectl config set-context default --cluster=k8s --user=admin
+        - kubectl config use-context default
+        - |
+            cat <<EOF | kubectl apply -f -
+            apiVersion: v1
+            kind: Service
+            metadata:
+              name: $_PROJECT_NAME
+              labels:
+                app: $_PROJECT_NAME
+            spec:
+              ports:
+                - port: 8080
+                  targetPort: 8080
+              selector:
+                app: $_PROJECT_NAME
+            EOF
+        - |
+            cat  <<EOF | kubectl apply -f -
+            apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              name: $_PROJECT_NAME
+              labels:
+                app: $_PROJECT_NAME
+            spec:
+              replicas: 1
+              selector:
+                matchLabels:
+                  app: $_PROJECT_NAME
+              template:
+                metadata:
+                  labels:
+                    app: $_PROJECT_NAME
+                spec:
+                  containers:
+                    - name: $_PROJECT_NAME
+                      image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$_PROJECT_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
+                      ports:
+                        - containerPort: 8080
+                      readinessProbe:
+                        httpGet:
+                          path: /calls
+                          port: 8080
+                        initialDelaySeconds: 10
+                        timeoutSeconds: 2
+                        periodSeconds: 5
+                        failureThreshold: 10
+                      livenessProbe:
+                        httpGet:
+                          path: /calls
+                          port: 8080
+                        initialDelaySeconds: 120
+                        timeoutSeconds: 2
+                        periodSeconds: 5
+                        failureThreshold: 5
+            EOF
+  
+  cache:
+    paths:
+      - '/root/.m2/**/*'
+  ```
+
+#### - CodeBuild 프로젝트 생성
+  
 
 
 ----------
