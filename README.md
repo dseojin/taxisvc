@@ -411,7 +411,50 @@ public class CallViewViewHandler {
 - pvc
 
 
+----------
+
+
 ### 4.5 무정지배포
+#### call 서비스의 deployment.yaml 에 image 버전 번경 및 readinessProbe 설정
+  ```
+  apiVersion: apps/v1
+  kind: Deployment
+  ...
+      spec:
+        containers:
+          - name: call
+            image: leeeojin/call:v3
+            ...
+            readinessProbe:
+              httpGet:
+                path: '/calls'
+                port: 8080
+              initialDelaySeconds: 10
+              timeoutSeconds: 2
+              periodSeconds: 5
+              failureThreshold: 10
+  ...
+
+  ```
+
+
+### siege를 통해 충분한 시간만큼 부하를 준다.
+### siege -c1 -t60S -v http://call:8080/calls --delay=1S
+  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/5bbfe33d-bbbe-495f-8a4a-e4afaedd2ae1)
+
+
+
+### 이전 버전(‘v2’)이 부하를 받는 상황에서 새로운 버전 ‘v3’ 버전을 배포한다.
+  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/e85a85e6-2b18-41f9-9338-ca95008de9c7)
+
+
+
+### siege 로그를 보면서 배포시 무정지로 배포된 것을 확인
+  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/8d320499-85b8-43aa-a283-24fe32870f07)
+
+
+
+----------
 
 
 
