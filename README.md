@@ -318,29 +318,37 @@ public class CallViewViewHandler {
 - ![image](https://github.com/dseojin/taxisvc/assets/173647509/a5fafba3-eb12-4bc6-8a56-73b30787e0d8)
 - ![image](https://github.com/dseojin/taxisvc/assets/173647509/8e9cf889-c527-43be-8801-fae50ab467f3)
 
+----------
+----------
+
 ## 4. 운영
 ### 4.1 클라우드 배포 - Container 운영
 
+
+----------
 ### 4.2 컨테이너 자동확장 - HPA
-- call 서비스에 Auto Scale-Out 설정 후 설정값 확인
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/bc4d6fc6-b948-4080-9b1f-721c15537ed5)
+#### - call 서비스에 Auto Scale-Out 설정 후 설정값 확인
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/bc4d6fc6-b948-4080-9b1f-721c15537ed5)
 
-- seige 명령으로 부하를 주어서 Pod 가 늘어나도록 한다
-- siege -c20 -t40S -v http://call:8080/calls
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/ceeb66b5-ed9f-4196-88fa-bd4d6899ef22)
+
+#### - seige 명령으로 부하를 주어서 Pod 가 늘어나도록 한다
+##### siege -c20 -t40S -v http://call:8080/calls
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/ceeb66b5-ed9f-4196-88fa-bd4d6899ef22)
+
   
-- kubectl get po -w 명령을 사용하여 pod 가 생성되는 것을 확인한다.
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/9127ab81-7c76-493d-829e-fade5181bf02)
+#### - kubectl get po -w 명령을 사용하여 pod 가 생성되는 것을 확인한다.
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/9127ab81-7c76-493d-829e-fade5181bf02)
 
-- kubectl get hpa 명령어로 CPU 값이 늘어난 것을 확인 한다.
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/2aee2c2a-ac3e-43aa-876c-45d9000ada28)
+
+#### - kubectl get hpa 명령어로 CPU 값이 늘어난 것을 확인 한다.
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/2aee2c2a-ac3e-43aa-876c-45d9000ada28)
 
 ----------
 
 
 ### 4.3 컨테이너 환경분리 - configMap
 #### - call 서비스에 configMap 을 사용하기 위해 deployment.yaml, application.yml 수정
-##### 1. deployment.yaml : configMap으로 log level을 'DEBUG'로 설정
+##### 1. deployment.yaml : config 설정 등록
 ##### 2. application.yml : 환경변수값을 사용하도록 변경
   ```
   /workspace/taxisvc/call/kubernetes/deployment.yaml
