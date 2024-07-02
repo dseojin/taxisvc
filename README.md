@@ -10,6 +10,8 @@ call 서비스와 drive 서비스의 상세 모델을 참조하여 calldashboard
 ```
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/9c2ed0d4-61b9-4555-8148-1c94bb9bd10f)
 
+----------
+----------
 
 ## 2. 모델링
 ### 2.1 이벤트 스토밍
@@ -30,6 +32,9 @@ call 서비스와 drive 서비스의 상세 모델을 참조하여 calldashboard
 운행 종료 시 호출 상태를 변경한다.
 ```
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/606bc341-bb25-4f6c-b1bf-8f366cb32a7a)
+
+----------
+----------
 
 ## 3. 구현
 ```
@@ -172,49 +177,59 @@ public class Drive {
 
 
 ```
-- 택시 call 시스템의 이벤트 드리븐한 Flow
+#### - 택시 call 시스템의 이벤트 드리븐한 Flow
 ```
 1. user가 택시 call 선택 시 payment 서비스의 결제 로직이 수행되고, 결제가 완료되면 'farePaid' 이벤트를 Pub 한다
 2. drive 모듈에서 'farePaid' 이벤트 수신 시 드라이브 데이터 변경 & 'driveStarted' 이벤트를 Pub 한다.
 3. driver가 운행종료 수행 시  'driveEnded' 이벤트가 Pub 된다.
 4. call 모듈에서 'driveEnded' 이벤트를 Sub 할 경우 callStatus를 'driveComplete'로 바꾼다
 ```
-   - http 명령어를 사용하여 사용자ID, 사용자명, 거리 데이터를 넘겨 call 1건을 등록한다
-   - ![image](https://github.com/dseojin/taxisvc/assets/173647509/b0b1b0e6-1cd4-414a-978a-b69c4c61ce1f)
+   ##### 1. http 명령어를 사용하여 사용자ID, 사용자명, 거리 데이터를 넘겨 call 1건을 등록한다
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/b0b1b0e6-1cd4-414a-978a-b69c4c61ce1f)
 
-   - kafka client 확인 시 요금지불, 콜요청, 드라이브시작 이벤트 발행이 확인된다
-   - ![image](https://github.com/dseojin/taxisvc/assets/173647509/49bd3689-de3c-44db-a12f-c218e7ecb29f)
 
-   - /drives/end url에 드라이브ID를 전달하여 해당 드라이브ID를 운행종료시킨다.
-   - ![image](https://github.com/dseojin/taxisvc/assets/173647509/5a5045d5-da61-4fad-bee2-e110cdb69185)
+   ##### 2. kafka client 확인 시 요금지불, 콜요청, 드라이브시작 이벤트 발행이 확인된다
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/49bd3689-de3c-44db-a12f-c218e7ecb29f)
 
-   - kafka client 확인 시 drive 종료 이벤트 발행이 확인된다.
-   - ![image](https://github.com/dseojin/taxisvc/assets/173647509/59076647-aadb-4783-905b-1df9f73fb986)
 
-   - 운행종료 이후 call 상태 확인 시 'driveComplete' 로 변경이 확인된다.
-   - ![image](https://github.com/dseojin/taxisvc/assets/173647509/d13b223e-d0a0-4542-9037-cb75312b4b42)
+   ##### 3. /drives/end url에 드라이브ID를 전달하여 해당 드라이브ID를 운행종료시킨다.
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/5a5045d5-da61-4fad-bee2-e110cdb69185)
 
+
+   ##### 4. kafka client 확인 시 drive 종료 이벤트 발행이 확인된다.
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/59076647-aadb-4783-905b-1df9f73fb986)
+
+
+   ##### 5. 운행종료 이후 call 상태 확인 시 'driveComplete' 로 변경이 확인된다.
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/d13b223e-d0a0-4542-9037-cb75312b4b42)
+
+
+-----------
 
 ### 3.2 보상처리
-- 비즈니스 예외 케이스로 운행불가 시 call의 상태 변경을 통해 데이터를 동기화한다.
+#### - 비즈니스 예외 케이스로 운행불가 시 call의 상태 변경을 통해 데이터를 동기화한다.
 ```
 1. 거리 기준 초과로 드라이버 배정 불가 시 'driveNotAvaliabled' 이벤트를 Pub 한다
 2. call 모듈에서 'driveNotAvaliabled' 이벤트 수신 시 call 상태를 requestCancel로 변경 후 'callCancelled' 이벤트를 발행한다.
 3. payment 모듈에서 'callCancelled' 이벤트 Sub 시 pay cancel 로직을 수행한다.
 ```
- - call 1건 등록 완료.(callID = 2)
- - ![image](https://github.com/dseojin/taxisvc/assets/173647509/657da825-40ce-4a86-9ea7-45a31b6c4456)
+ ##### 1. call 1건 등록 완료.(callID = 2)
+ ![image](https://github.com/dseojin/taxisvc/assets/173647509/657da825-40ce-4a86-9ea7-45a31b6c4456)
 
- - kafka client 확인 시 callId 2번에 드라이버 배정 불가 이벤트가 발행됨을 확인한다.
- - ![image](https://github.com/dseojin/taxisvc/assets/173647509/ca7f80ed-8d58-4c06-9b57-1015815de978)
+ 
+ ##### 2. kafka client 확인 시 callId 2번에 드라이버 배정 불가 이벤트가 발행됨을 확인한다.
+ ![image](https://github.com/dseojin/taxisvc/assets/173647509/ca7f80ed-8d58-4c06-9b57-1015815de978)
 
- - 드라이버 배정 불가함에 따라 call 상태가 요청취소로 변경됨을 확인한다.
- - ![image](https://github.com/dseojin/taxisvc/assets/173647509/00e2fb60-3c24-484b-9ebd-3e5db5e5e795)
+ 
+ ##### 3. 드라이버 배정 불가함에 따라 call 상태가 요청취소로 변경됨을 확인한다.
+ ![image](https://github.com/dseojin/taxisvc/assets/173647509/00e2fb60-3c24-484b-9ebd-3e5db5e5e795)
 
- - callCancelled 이벤트를 수신한 payment 서비스는 결제 취소 로직을 수행한다. (로직은 log로 대체)
- - ![image](https://github.com/dseojin/taxisvc/assets/173647509/9dd7135b-1783-428c-8946-45275cbd97f1)
+ 
+ ##### 4. callCancelled 이벤트를 수신한 payment 서비스는 결제 취소 로직을 수행한다. (로직은 log로 대체)
+ ![image](https://github.com/dseojin/taxisvc/assets/173647509/9dd7135b-1783-428c-8946-45275cbd97f1)
 
 
+----------
 
 ### 3.3 단일진입점 : Gateway 서비스를 구현
 ```
@@ -249,12 +264,14 @@ spring:
             - Path=/**
 ...
 ```
-- gateway port로 call 서비스 호출 (port 8088)
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/8517ae7b-1c0a-4a6a-9db0-cd608a5e809c)
+#### - gateway port로 call 서비스 호출 (port 8088)
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/8517ae7b-1c0a-4a6a-9db0-cd608a5e809c)
 
-- gateway port로 drive 서비스 호출 (port 8088)
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/ab1d6097-87d2-4488-a76d-4f83a8528983)
+#### - gateway port로 drive 서비스 호출 (port 8088)
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/ab1d6097-87d2-4488-a76d-4f83a8528983)
 
+
+----------
 
 ### 3.4 분산 데이터 프로젝션 (CQRS)
 ```
@@ -310,13 +327,15 @@ public class CallViewViewHandler {
     }
 ...
 ```
-- call 1건을 등록한 후, CallView 의 내용을 확인한다
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/c197c087-f43a-4504-b593-345ba76192fe)
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/24f35b38-b755-4e90-b96f-3604cdcebfd4)
+#### - call 1건을 등록한 후, CallView 의 내용을 확인한다
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/c197c087-f43a-4504-b593-345ba76192fe)
 
-- drive 서비스(8084)를 다운시킨 다음, CallView 의 내용을 확인하여도 서비스가 안정적임을 확인한다.
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/a5fafba3-eb12-4bc6-8a56-73b30787e0d8)
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/8e9cf889-c527-43be-8801-fae50ab467f3)
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/24f35b38-b755-4e90-b96f-3604cdcebfd4)
+
+#### - drive 서비스(8084)를 다운시킨 다음, CallView 의 내용을 확인하여도 서비스가 안정적임을 확인한다.
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/a5fafba3-eb12-4bc6-8a56-73b30787e0d8)
+
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/8e9cf889-c527-43be-8801-fae50ab467f3)
 
 ----------
 ----------
@@ -344,7 +363,7 @@ public class CallViewViewHandler {
   phases:
     install:
       runtime-versions:
-        java: corretto17
+        java: corretto15
         docker: 20
       commands:
         - echo install kubectl
@@ -437,7 +456,25 @@ public class CallViewViewHandler {
   ```
 
 #### - CodeBuild 프로젝트 생성
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/6bcc4d01-2823-4e0a-b17f-fc5152fbeca8)
+
+
+#### - CodeBuild가 ECR에 접근할 수 있도록 정책 설정
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/92656010-7e4a-4f2e-aae0-8c28ab05b5b8)
+
   
+
+#### - github로 소스코드 수정 시 자동 build 및 이미지 생성 확인
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/85d1d213-64d9-4f03-8b98-8d010d965ae5)
+
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/74b64c6f-65f3-4efc-b2ef-df355029133a)
+
+  
+
+#### - 빌드 시작 및 단계 세부 정보 확인
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/b4947f28-4ef0-4406-9ff9-4a7bf8cd991f)
+
+
 
 
 ----------
