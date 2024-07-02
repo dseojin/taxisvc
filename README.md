@@ -416,11 +416,11 @@ public class CallViewViewHandler {
 
 
 ### 4.6 서비스 메쉬 - istio
-#### Istio 설치 진행 후 자동으로 사이드카(Sidecar)를 Pod 내에 인잭션하도록 설정
+#### - Istio 설치 진행 후 자동으로 사이드카(Sidecar)를 Pod 내에 인잭션하도록 설정
   ```
   kubectl label namespace default istio-injection=enabled
   ```
-#### pod 배포 및 pod 확인
+#### - pod 배포 및 pod 확인
   - ![image](https://github.com/dseojin/taxisvc/assets/173647509/f7f30582-24fc-4039-9658-459fb7aab2d6)
   - ![image](https://github.com/dseojin/taxisvc/assets/173647509/7135c520-b492-4709-a06f-71a92fb311b2)
 
