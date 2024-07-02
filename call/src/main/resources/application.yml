@@ -58,10 +58,18 @@ hystrix:
     default:
       execution.isolation.thread.timeoutInMilliseconds: 610 # 읽기 타임아웃 (밀리초 단위)
       
+# logging:
+#   level:
+#     org.hibernate.type: trace
+#     org.springframework.cloud: debug
 logging:
   level:
-    org.hibernate.type: trace
-    org.springframework.cloud: debug
+    root: ${ORDER_LOG_LEVEL}
+    org:
+      hibernate:
+        SQL: ${ORDER_LOG_LEVEL}
+      springframework:
+        cloud: ${ORDER_LOG_LEVEL}
 
 api:
   url: 
@@ -106,5 +114,14 @@ spring:
 api:
   url: 
     payment: payment:8080 
+
+logging:
+  level:
+    root: ${ORDER_LOG_LEVEL}
+    org:
+      hibernate:
+        SQL: ${ORDER_LOG_LEVEL}
+      springframework:
+        cloud: ${ORDER_LOG_LEVEL}
     
 
