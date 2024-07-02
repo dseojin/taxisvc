@@ -335,9 +335,13 @@ public class CallViewViewHandler {
 - kubectl get hpa 명령어로 CPU 값이 늘어난 것을 확인 한다.
 - ![image](https://github.com/dseojin/taxisvc/assets/173647509/2aee2c2a-ac3e-43aa-876c-45d9000ada28)
 
+----------
+
+
 ### 4.3 컨테이너 환경분리 - configMap
-- call 서비스에 configMap 을 사용하기 위해 deployment.yaml, application.yml 수정
-- configMap으로 log level을 'DEBUG'로 설정
+#### - call 서비스에 configMap 을 사용하기 위해 deployment.yaml, application.yml 수정
+##### 1. deployment.yaml : configMap으로 log level을 'DEBUG'로 설정
+##### 2. application.yml : 환경변수값을 사용하도록 변경
   ```
   /workspace/taxisvc/call/kubernetes/deployment.yaml
   apiVersion: apps/v1
@@ -353,7 +357,7 @@ public class CallViewViewHandler {
                 key: ORDER_LOG_LEVEL
   ...
 
-
+----------
   /workspace/taxisvc/call/src/main/resources/application.yml
   spring:
   profiles: docker
@@ -368,29 +372,37 @@ public class CallViewViewHandler {
         springframework:
           cloud: ${ORDER_LOG_LEVEL}
   ```
-- YAML 기반의 ConfigMap을 생성
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/744eaf36-fce8-4829-aa2c-57123e15a656)
 
-- call 서비스 재배포
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/646958c3-d7a1-42b7-a0b6-04090b0e97f2)
+#### - YAML 기반의 ConfigMap을 생성
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/744eaf36-fce8-4829-aa2c-57123e15a656)
 
-- log level 이 'DEBUG'로 적용됨을 확인한다.
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/dc15342a-62dc-41ff-92d5-be46c0774726)
 
-- configMap으로 log level을 'INFO'로 변경
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/de521d24-2296-4c1e-a3f0-03b163574638)
+#### - call 서비스 재배포
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/646958c3-d7a1-42b7-a0b6-04090b0e97f2)
 
-- call 서비스 재배포 후 log level 이 'INFO'로 변경됨을 확인한다.
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/e19a2421-1207-4823-a05d-38ddcd4a394e)
+
+#### - log level 이 'DEBUG'로 적용됨을 확인한다.
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/dc15342a-62dc-41ff-92d5-be46c0774726)
+
+
+#### - configMap으로 log level을 'INFO'로 변경
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/de521d24-2296-4c1e-a3f0-03b163574638)
+
+#### - call 서비스 재배포 후 log level 이 'INFO'로 변경됨을 확인한다.
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/e19a2421-1207-4823-a05d-38ddcd4a394e)
+
+----------
 
 ### 4.4 클라우드스토리지 활용 - PVC
-- EBS CSI Driver 기반 gp3 StorageClass 등록
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/95d99900-403b-497b-b0a3-bd0910cce011)
+#### - EBS CSI Driver 기반 gp3 StorageClass 등록
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/95d99900-403b-497b-b0a3-bd0910cce011)
 
-- Storage Class 확인
-- ![image](https://github.com/dseojin/taxisvc/assets/173647509/a2e121fb-ba5b-4228-abd6-3aec78820587)
 
-- PVC 생성
+#### - Storage Class 확인
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/a2e121fb-ba5b-4228-abd6-3aec78820587)
+
+
+#### - PVC 생성
   ```
   kubectl apply -f - <<EOF
   apiVersion: v1
@@ -408,14 +420,16 @@ public class CallViewViewHandler {
     storageClassName: ebs-sc
   EOF
   ```
-- pvc
+
+
+#### - pvc .. kafka??
 
 
 ----------
 
 
 ### 4.5 무정지배포
-#### call 서비스의 deployment.yaml 에 image 버전 번경 및 readinessProbe 설정
+#### - call 서비스의 deployment.yaml 에 image 버전 번경 및 readinessProbe 설정
   ```
   apiVersion: apps/v1
   kind: Deployment
@@ -438,19 +452,19 @@ public class CallViewViewHandler {
   ```
 
 
-### siege를 통해 충분한 시간만큼 부하를 준다.
-### siege -c1 -t60S -v http://call:8080/calls --delay=1S
-  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/5bbfe33d-bbbe-495f-8a4a-e4afaedd2ae1)
+#### - siege를 통해 충분한 시간만큼 부하를 준다.
+##### siege -c1 -t60S -v http://call:8080/calls --delay=1S
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/5bbfe33d-bbbe-495f-8a4a-e4afaedd2ae1)
 
 
 
-### 이전 버전(‘v2’)이 부하를 받는 상황에서 새로운 버전 ‘v3’ 버전을 배포한다.
-  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/e85a85e6-2b18-41f9-9338-ca95008de9c7)
+#### - 이전 버전(‘v2’)이 부하를 받는 상황에서 새로운 버전 ‘v3’ 버전을 배포한다.
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/e85a85e6-2b18-41f9-9338-ca95008de9c7)
 
 
 
-### siege 로그를 보면서 배포시 무정지로 배포된 것을 확인
-  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/8d320499-85b8-43aa-a283-24fe32870f07)
+#### - siege 로그를 보면서 배포시 무정지로 배포된 것을 확인
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/8d320499-85b8-43aa-a283-24fe32870f07)
 
 
 
@@ -464,33 +478,36 @@ public class CallViewViewHandler {
   kubectl label namespace default istio-injection=enabled
   ```
 #### - pod 배포 및 pod 확인
-  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/f7f30582-24fc-4039-9658-459fb7aab2d6)
-  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/7135c520-b492-4709-a06f-71a92fb311b2)
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/f7f30582-24fc-4039-9658-459fb7aab2d6)
+   
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/7135c520-b492-4709-a06f-71a92fb311b2)
 
 
+----------
 
 ### 4.7 통합모니터링 - grafana
-#### istio svc 조회
-  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/6627ce81-b545-477c-94c1-aa818c94ffde)
-
-
-#### Grafana 서비스 Open - Service Scope을 LoadBalancer Type으로 수정
-  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/1dfe09da-3e2a-483e-a66e-2fb76c196fd0)
+#### - istio svc 조회
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/6627ce81-b545-477c-94c1-aa818c94ffde)
 
 
 
-#### Grafana External IP 접속 후 Istio Service Dashboard 조회
-  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/d9030c4c-5f1d-4588-b374-814673ece042)
+#### - Grafana 서비스 Open - Service Scope을 LoadBalancer Type으로 수정
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/1dfe09da-3e2a-483e-a66e-2fb76c196fd0)
 
 
 
-#### Grafana providing Dashboard 활용하기
-#### Siege 터미널에서 call 서비스로 부하를 발생 
-  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/84d4cfb8-34e4-45bc-83d0-5c77b01a8303)
+#### - Grafana External IP 접속 후 Istio Service Dashboard 조회
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/d9030c4c-5f1d-4588-b374-814673ece042)
 
 
-#### 부하량에 따른 서비스 차트의 실시간 Gauge 확인
-  - ![image](https://github.com/dseojin/taxisvc/assets/173647509/b2c9e392-b96e-4409-b2f3-835bc247bfd9)
+
+#### - Grafana providing Dashboard 활용하기
+##### 1. Siege 터미널에서 call 서비스로 부하를 발생 
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/84d4cfb8-34e4-45bc-83d0-5c77b01a8303)
+
+
+##### 2. 부하량에 따른 서비스 차트의 실시간 Gauge 확인
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/b2c9e392-b96e-4409-b2f3-835bc247bfd9)
 
 
 
