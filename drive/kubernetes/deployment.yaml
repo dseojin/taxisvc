@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: drive
-          image: "username/drive:latest"
+          image: leeeojin/drive:v1
           ports:
             - containerPort: 8080
           readinessProbe:

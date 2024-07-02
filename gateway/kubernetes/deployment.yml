@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: username/gateway:latest
+          image: leeeojin/gateway:v1
           ports:
             - containerPort: 8080
