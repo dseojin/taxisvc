@@ -384,12 +384,68 @@ public class CallViewViewHandler {
 - ![image](https://github.com/dseojin/taxisvc/assets/173647509/e19a2421-1207-4823-a05d-38ddcd4a394e)
 
 ### 4.4 클라우드스토리지 활용 - PVC
+- EBS CSI Driver 기반 gp3 StorageClass 등록
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/95d99900-403b-497b-b0a3-bd0910cce011)
+
+- Storage Class 확인
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/a2e121fb-ba5b-4228-abd6-3aec78820587)
+
+- PVC 생성
+  ```
+  kubectl apply -f - <<EOF
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: aws-ebs
+    labels:
+      app: test-pvc
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 1Mi
+    storageClassName: ebs-sc
+  EOF
+  ```
+- pvc
+
 
 ### 4.5 무정지배포
 
 ### 4.6 서비스 메쉬 - istio
+- Istio 설치 진행 후 자동으로 사이드카(Sidecar)를 Pod 내에 인잭션하도록 설정
+```
+kubectl label namespace default istio-injection=enabled
+```
+- pod 배포 및 pod 확인
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/f7f30582-24fc-4039-9658-459fb7aab2d6)
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/7135c520-b492-4709-a06f-71a92fb311b2)
+
+
 
 ### 4.7 통합모니터링 - grafana
+- istio svc 조회
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/6627ce81-b545-477c-94c1-aa818c94ffde)
+
+- Grafana 서비스 Open - Service Scope을 LoadBalancer Type으로 수정
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/1dfe09da-3e2a-483e-a66e-2fb76c196fd0)
+
+
+- Grafana External IP 접속 후 Istio Service Dashboard 조회
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/d9030c4c-5f1d-4588-b374-814673ece042)
+
+
+- Grafana providing Dashboard 활용하기
+- Siege 터미널에서 call 서비스로 부하를 발생 
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/84d4cfb8-34e4-45bc-83d0-5c77b01a8303)
+
+- 부하량에 따른 서비스 차트의 실시간 Gauge 확인
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/b2c9e392-b96e-4409-b2f3-835bc247bfd9)
+
+
+
+
 
 
 ```
