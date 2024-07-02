@@ -182,8 +182,8 @@ public class Drive {
    - http 명령어를 사용하여 사용자ID, 사용자명, 거리 데이터를 넘겨 call 1건을 등록한다
    - ![image](https://github.com/dseojin/taxisvc/assets/173647509/b0b1b0e6-1cd4-414a-978a-b69c4c61ce1f)
 
-   - kafka client 확인 시 요금지불, 드라이브시작 이벤트 발행이 확인된다
-   - ![image](https://github.com/dseojin/taxisvc/assets/173647509/c8aa00b6-b87e-4c34-b6ed-4a6c6d6997d3)
+   - kafka client 확인 시 요금지불, 콜요청, 드라이브시작 이벤트 발행이 확인된다
+   - ![image](https://github.com/dseojin/taxisvc/assets/173647509/49bd3689-de3c-44db-a12f-c218e7ecb29f)
 
    - /drives/end url에 드라이브ID를 전달하여 해당 드라이브ID를 운행종료시킨다.
    - ![image](https://github.com/dseojin/taxisvc/assets/173647509/5a5045d5-da61-4fad-bee2-e110cdb69185)
