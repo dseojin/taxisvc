@@ -318,6 +318,79 @@ public class CallViewViewHandler {
 - ![image](https://github.com/dseojin/taxisvc/assets/173647509/a5fafba3-eb12-4bc6-8a56-73b30787e0d8)
 - ![image](https://github.com/dseojin/taxisvc/assets/173647509/8e9cf889-c527-43be-8801-fae50ab467f3)
 
+## 4. 운영
+### 4.1 클라우드 배포 - Container 운영
+
+### 4.2 컨테이너 자동확장 - HPA
+- call 서비스에 Auto Scale-Out 설정 후 설정값 확인
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/bc4d6fc6-b948-4080-9b1f-721c15537ed5)
+
+- seige 명령으로 부하를 주어서 Pod 가 늘어나도록 한다
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/ceeb66b5-ed9f-4196-88fa-bd4d6899ef22)
+  
+- kubectl get po -w 명령을 사용하여 pod 가 생성되는 것을 확인한다.
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/9127ab81-7c76-493d-829e-fade5181bf02)
+
+- kubectl get hpa 명령어로 CPU 값이 늘어난 것을 확인 한다.
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/2aee2c2a-ac3e-43aa-876c-45d9000ada28)
+
+### 4.3 컨테이너 환경분리 - configMap
+- call 서비스에 configMap 을 사용하기 위해 deployment.yaml, application.yml 수정
+- configMap으로 log level을 'DEBUG'로 설정
+  ```
+  /workspace/taxisvc/call/kubernetes/deployment.yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: call
+  ...
+          env:
+          - name: ORDER_LOG_LEVEL
+            valueFrom:
+              configMapKeyRef:
+                name: config-dev
+                key: ORDER_LOG_LEVEL
+  ...
+
+
+  /workspace/taxisvc/call/src/main/resources/application.yml
+  spring:
+  profiles: docker
+  ...
+
+  logging:
+    level:
+      root: ${ORDER_LOG_LEVEL}
+      org:
+        hibernate:
+          SQL: ${ORDER_LOG_LEVEL}
+        springframework:
+          cloud: ${ORDER_LOG_LEVEL}
+  ```
+- YAML 기반의 ConfigMap을 생성
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/744eaf36-fce8-4829-aa2c-57123e15a656)
+
+- call 서비스 재배포
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/646958c3-d7a1-42b7-a0b6-04090b0e97f2)
+
+- log level 이 'DEBUG'로 적용됨을 확인한다.
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/dc15342a-62dc-41ff-92d5-be46c0774726)
+
+- configMap으로 log level을 'INFO'로 변경
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/de521d24-2296-4c1e-a3f0-03b163574638)
+
+- call 서비스 재배포 후 log level 이 'INFO'로 변경됨을 확인한다.
+- ![image](https://github.com/dseojin/taxisvc/assets/173647509/e19a2421-1207-4823-a05d-38ddcd4a394e)
+
+### 4.4 클라우드스토리지 활용 - PVC
+
+### 4.5 무정지배포
+
+### 4.6 서비스 메쉬 - istio
+
+### 4.7 통합모니터링 - grafana
+
+
 ```
 gitpod.io/#/github.com/dseojin/taxisvc
 
@@ -335,14 +408,27 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 helm install my-kafka bitnami/kafka --version 23.0.5
 
+    PRODUCER:
+        kafka-console-producer.sh \
+            --broker-list my-kafka-0.my-kafka-headless.default.svc.cluster.local:9092 \
+            --topic test
 
+    CONSUMER:
+        kafka-console-consumer.sh \
+            --bootstrap-server my-kafka.default.svc.cluster.local:9092 \
+            --topic test \
+            --from-beginning
+
+my-kafka-0.my-kafka-headless.default.svc.cluster.local:9092
 
 cd infra
 docker-compose exec -it kafka /bin/bash
 cd /bin
 
+kubectl exec --tty -i my-kafka-client --namespace default -- bash
 // 토픽 생성
 ./kafka-topics --bootstrap-server http://localhost:9092 --topic taxisvc --create --partitions 1 --replication-factor 1
+ kafka-console-consumer.sh --bootstrap-server my-kafka.default.svc.cluster.local:9092 --topic taxisvc --create --partitions 1 --replication-factor 1
 
 // 토픽에 메시지 삭제
 ./kafka-topics --delete --bootstrap-server http://localhost:9092 --topic taxisvc 
