@@ -491,7 +491,7 @@ public class CallViewViewHandler {
    ![image](https://github.com/dseojin/taxisvc/assets/173647509/7135c520-b492-4709-a06f-71a92fb311b2)
 
 
-----------
+-----
 
 ### 4.7 통합모니터링 - grafana
 #### - istio svc 조회
@@ -510,11 +510,15 @@ public class CallViewViewHandler {
 
 
 #### - Grafana providing Dashboard 활용하기
-##### 1. Siege 터미널에서 call 서비스로 부하를 발생 
+##### 1. id 315번 dashboard를 load 하여 import
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/866f1cab-c3fc-46fa-a39a-9274b8d9e76a)
+
+
+##### 2. Siege 터미널에서 call 서비스로 부하를 발생 
    ![image](https://github.com/dseojin/taxisvc/assets/173647509/84d4cfb8-34e4-45bc-83d0-5c77b01a8303)
 
 
-##### 2. 부하량에 따른 서비스 차트의 실시간 Gauge 확인
+##### 3. 부하량에 따른 서비스 차트의 실시간 Gauge 확인
    ![image](https://github.com/dseojin/taxisvc/assets/173647509/b2c9e392-b96e-4409-b2f3-835bc247bfd9)
 
 
