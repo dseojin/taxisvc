@@ -319,6 +319,8 @@ public class CallViewViewHandler {
 - ![image](https://github.com/dseojin/taxisvc/assets/173647509/8e9cf889-c527-43be-8801-fae50ab467f3)
 
 ```
+gitpod.io/#/github.com/dseojin/taxisvc
+
 //로컬 카프카
 cd infra
 docker-compose exec -it kafka /bin/bash
@@ -332,6 +334,34 @@ chmod 700 get_helm.sh
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 helm install my-kafka bitnami/kafka --version 23.0.5
+
+
+
+cd infra
+docker-compose exec -it kafka /bin/bash
+cd /bin
+
+// 토픽 생성
+./kafka-topics --bootstrap-server http://localhost:9092 --topic taxisvc --create --partitions 1 --replication-factor 1
+
+// 토픽에 메시지 삭제
+./kafka-topics --delete --bootstrap-server http://localhost:9092 --topic taxisvc 
+
+// 토픽 리스트조회
+./kafka-topics --bootstrap-server http://localhost:9092 --list --exclude-internal  
+
+// 토픽 consumer
+./kafka-console-consumer --bootstrap-server http://localhost:9092 --topic taxisvc --from-beginning
+
+mvn spring-boot:run
+
+
+http get :8088/calls
+http get :8088/calls/1
+http :8088/calls userId=1 userName=eojin distance=10
+http :8088/calls/cancel callId=1
+http :8088/drives/end driveId=1
+http :8085/callViews
 
 ```
 
