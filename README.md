@@ -259,7 +259,7 @@ spring:
 ### 3.4 분산 데이터 프로젝션 (CQRS)
 ```
 // mypage 서비스에서는 타서비스들에서 발행된 이벤트들을 읽어 데이터를 저장하는 CallViewViewHandler 를 생성하여 데이터 프로젝션을 수행하였다.
-//mypage/src/main/java/taxisvc/infra/CallViewViewHandler.java
+// mypage/src/main/java/taxisvc/infra/CallViewViewHandler.java
 
 ...
 @Service
@@ -326,6 +326,7 @@ public class CallViewViewHandler {
 - ![image](https://github.com/dseojin/taxisvc/assets/173647509/bc4d6fc6-b948-4080-9b1f-721c15537ed5)
 
 - seige 명령으로 부하를 주어서 Pod 가 늘어나도록 한다
+- siege -c20 -t40S -v http://call:8080/calls
 - ![image](https://github.com/dseojin/taxisvc/assets/173647509/ceeb66b5-ed9f-4196-88fa-bd4d6899ef22)
   
 - kubectl get po -w 명령을 사용하여 pod 가 생성되는 것을 확인한다.
