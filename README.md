@@ -2,12 +2,12 @@
 
 ## 1. 아키텍처
 ### 1.1 MSA 아키텍처 구성도
-```
-1. gateway service를 통해 단일진입이 가능하도록 라우팅 설정되었다.
-2. 택시를 요청하는 call 서비스, 결제가 이루어지는 payment 서비스, 드라이브 데이터를 관리하는 drive 서비스로 구성되어있고
-call 서비스와 drive 서비스의 상세 모델을 참조하여 calldashboard(callView) 서비스를 만들어 CQRS를 적용하였다.
-3. Istio 서비스 메쉬를 활용하여 모니터링 툴 그라파나를 사용하였다.
-```
+#### - 구성도 설명
+1. gateway service를 통해 단일진입이 가능하도록 라우팅 설정
+2. 클라이언트가 택시를 요청하는 call 서비스, 택시 요금 결제가 이루어지는 payment 서비스, 운행 관련 데이터를 관리하는 drive 서비스로 구성되어있고
+call 서비스와 drive 서비스의 상세 모델을 참조하여 calldashboard(callView) 서비스를 만들어 CQRS를 적용
+3. Istio 서비스 메쉬를 활용하여 모니터링 툴로 그라파나를 사용
+
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/9c2ed0d4-61b9-4555-8148-1c94bb9bd10f)
 
 ----------
@@ -15,41 +15,32 @@ call 서비스와 drive 서비스의 상세 모델을 참조하여 calldashboard
 
 ## 2. 모델링
 ### 2.1 이벤트 스토밍
-```
-- call
-사용자가 택시를 호출한다.
-택시 호출 시 결제가 이루어지고 결제 성공 시 운행을 요청한다.
-결제 실패 시 호출 상태를 취소로 변경한다.
-사용자가 택시호출을 취소한다.
-호출 취소 시 결제를 취소한다.
-호출 관련 데이터를 중간중간 조회한다.
+#### - call
+1. 사용자가 택시를 호출한다.
+2. 택시 호출 시 결제가 이루어지고 결제 성공 시 운행을 요청한다.
+3. 결제 실패 시 호출 상태를 취소로 변경한다.
+4. 사용자가 택시호출을 취소한다.
+5. 호출 상태가 취소로 변경되면 결제를 취소한다.
+6. 호출 관련 데이터를 중간중간 조회한다.
 
-- drive
-결제가 완료된 호출 요청이 오면 운행이 시작된다.
-운행 시작 시 호출 상태를 변경한다.
-요청거리가 먼 경우 호출을 취소 시킨다.
-드라이버가 운행을 종료한다.
-운행 종료 시 호출 상태를 변경한다.
-```
+#### - drive
+1. 결제가 완료된 호출 요청이 오면 운행이 시작된다.
+2. 운행 시작 시 호출 상태를 변경한다.
+3. 요청거리가 기준을 초과하는 경우 호출을 취소 시킨다.
+4. 드라이버가 운행을 종료한다.
+5. 운행 종료 시 호출 상태를 변경한다.
+
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/606bc341-bb25-4f6c-b1bf-8f366cb32a7a)
 
 ----------
 ----------
 
 ## 3. 구현
-```
-# 서비스별 포트 참고
-call : 8082
-payment : 8083
-drive : 8084
-callView(CQRS) : 8085
-gateway : 8088
-```
 ### 3.1 분산트랜잭션
+#### - payment 서비스 구현
+1. payment 서비스와 drive 서비스간의 통신에서 이벤트 메세지를 Pub/Sub 하여 분산 트랜젝션을 구현
+2. payment 서비스에서 결제가 완료되면 Payment Aggregate에 insert가 발생하고 @PostPersist를 통해 post 발생 시 'farePaid' 이벤트를 발행
 ```
-//마이크로 서비스간의 통신에서 이벤트 메세지를 Pub/Sub 하여 분산 트랜젝션을 구현하였다.
-//payment 서비스에서 결제가 완료되면 Payment Aggregate에 insert가 발생하고
-// @PostPersist를 통해 post 발생 시 'farePaid' 이벤트를 발행하도록 구현하였다.
 // payment/src/main/java/taxisvc/domain/Payment.java
 package taxisvc.domain;
 
@@ -77,8 +68,12 @@ public class Payment {
         FarePaid farePaid = new FarePaid(this);
         farePaid.publishAfterCommit();
     }
+```
 
-// 'farePaid' 이벤트를 수신한 drive에서 policy를 통해 운행을 시작하는 로직을 구현하였다.
+#### - drive 서비스 구현
+1. payment 서비스로부터 'farePaid' 이벤트를 sub한 drive 서비스는 policy를 통해 운행을 시작하는 로직을 구현하였다.
+
+```
 // drive/src/main/java/taxisvc/infra/PolicyHandler.java
 package taxisvc.infra;
 
@@ -174,16 +169,13 @@ public class Drive {
     }
 
 }
-
-
 ```
-#### - 택시 call 시스템의 이벤트 드리븐한 Flow
-```
-1. user가 택시 call 선택 시 payment 서비스의 결제 로직이 수행되고, 결제가 완료되면 'farePaid' 이벤트를 Pub 한다
-2. drive 모듈에서 'farePaid' 이벤트 수신 시 드라이브 데이터 변경 & 'driveStarted' 이벤트를 Pub 한다.
-3. driver가 운행종료 수행 시  'driveEnded' 이벤트가 Pub 된다.
+
+#### - 택시 서비스 수행 결과
+1. user가 userId, userName, distance 입력하여 택시 call 선택 시 payment 서비스의 결제 로직이 수행되고, 결제가 완료되면 payment 서비스로부터 'farePaid' 이벤트가 발행된다
+2. drive 모듈에서 'farePaid' 이벤트 수신 시 Drive 데이터 생성 및 'driveStarted' 이벤트를 발행한다
+3. driver가 driveId를 입려갛여 운행종료 수행 시  'driveEnded' 이벤트가 발행된다
 4. call 모듈에서 'driveEnded' 이벤트를 Sub 할 경우 callStatus를 'driveComplete'로 바꾼다
-```
    ##### 1. http 명령어를 사용하여 사용자ID, 사용자명, 거리 데이터를 넘겨 call 1건을 등록한다
    ![image](https://github.com/dseojin/taxisvc/assets/173647509/b0b1b0e6-1cd4-414a-978a-b69c4c61ce1f)
 
@@ -207,33 +199,32 @@ public class Drive {
 -----------
 
 ### 3.2 보상처리
-#### - 비즈니스 예외 케이스로 운행불가 시 call의 상태 변경을 통해 데이터를 동기화한다.
-```
-1. 거리 기준 초과로 드라이버 배정 불가 시 'driveNotAvaliabled' 이벤트를 Pub 한다
-2. call 모듈에서 'driveNotAvaliabled' 이벤트 수신 시 call 상태를 requestCancel로 변경 후 'callCancelled' 이벤트를 발행한다.
+#### - 비즈니스 예외 케이스로 운행불가 발생 시 Call 데이터 롤백이 아닌 callStatus 값 변경을 통해 데이터를 동기화한다.
+1. 거리 기준 초과로 드라이버 배정 불가 판단 시 'driveNotAvaliabled' 이벤트를 Pub 한다
+2. call 서비스에서 'driveNotAvaliabled' 이벤트 수신 시 callStatus를 'requestCancel'로 변경 후 'callCancelled' 이벤트를 발행한다.
 3. payment 모듈에서 'callCancelled' 이벤트 Sub 시 pay cancel 로직을 수행한다.
-```
- ##### 1. call 1건 등록 완료.(callID = 2)
- ![image](https://github.com/dseojin/taxisvc/assets/173647509/657da825-40ce-4a86-9ea7-45a31b6c4456)
+   ##### 1. call 1건 등록 완료.(callID = 2)
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/657da825-40ce-4a86-9ea7-45a31b6c4456)
 
- 
- ##### 2. kafka client 확인 시 callId 2번에 드라이버 배정 불가 이벤트가 발행됨을 확인한다.
- ![image](https://github.com/dseojin/taxisvc/assets/173647509/ca7f80ed-8d58-4c06-9b57-1015815de978)
 
- 
- ##### 3. 드라이버 배정 불가함에 따라 call 상태가 요청취소로 변경됨을 확인한다.
- ![image](https://github.com/dseojin/taxisvc/assets/173647509/00e2fb60-3c24-484b-9ebd-3e5db5e5e795)
+   ##### 2. kafka client 확인 시 callId 2번에 드라이버 배정 불가 이벤트가 발행됨을 확인한다.
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/ca7f80ed-8d58-4c06-9b57-1015815de978)
 
- 
- ##### 4. callCancelled 이벤트를 수신한 payment 서비스는 결제 취소 로직을 수행한다. (로직은 log로 대체)
- ![image](https://github.com/dseojin/taxisvc/assets/173647509/9dd7135b-1783-428c-8946-45275cbd97f1)
+
+   ##### 3. 드라이버 배정 불가함에 따라 call 상태가 요청취소로 변경됨을 확인한다.
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/00e2fb60-3c24-484b-9ebd-3e5db5e5e795)
+
+
+   ##### 4. callCancelled 이벤트를 수신한 payment 서비스는 결제 취소 로직을 수행한다. (로직은 log로 대체)
+   ![image](https://github.com/dseojin/taxisvc/assets/173647509/9dd7135b-1783-428c-8946-45275cbd97f1)
 
 
 ----------
 
 ### 3.3 단일진입점 : Gateway 서비스를 구현
+#### - gateway 서비스
+1.  gateway 서비스의 application.ymal 파일 내에 라우팅 설정을 통해 gateway 포트로 진입 시 다른 서비스로 라우팅 되도록 설정하였다
 ```
-// gqteway 서비스의 application.ymal 파일 내에 라우팅 설정을 통해 gateway 포트로 진입 시 다른 서비스로 진입하도록 구현하였다.
 // gateway/src/main/resources/application.yml
 ...
 spring:
@@ -264,10 +255,11 @@ spring:
             - Path=/**
 ...
 ```
-#### - gateway port로 call 서비스 호출 (port 8088)
+#### - gateway 서비스를 통한 call, drive 서비스 호출 테스트
+  ##### 1. gateway port로 call 서비스 호출 시 정상 호출 확인 (port 8088)
   ![image](https://github.com/dseojin/taxisvc/assets/173647509/8517ae7b-1c0a-4a6a-9db0-cd608a5e809c)
 
-#### - gateway port로 drive 서비스 호출 (port 8088)
+  ##### 2. gateway port로 drive 서비스 호출 시 정상 호출 확인 (port 8088)
   ![image](https://github.com/dseojin/taxisvc/assets/173647509/ab1d6097-87d2-4488-a76d-4f83a8528983)
 
 
