@@ -568,7 +568,28 @@ public class CallViewViewHandler {
 
 
 #### - PVC 생성
-  ```
+```
+
+
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: nginx
+  name: pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ebs-sc
+EOF
+```
+
+```
+
   kubectl apply -f - <<EOF
   apiVersion: v1
   kind: PersistentVolumeClaim
@@ -587,7 +608,48 @@ public class CallViewViewHandler {
   ```
 
 
-#### - pvc .. kafka??
+#### - pvc 조회. 상태가 pending 
+![image](https://github.com/dseojin/taxisvc/assets/173647509/300d9c74-767d-43f4-879a-2eee771f9022)
+
+#### - call 서비스 deployment.yaml 에 pvc 설정 추가 후 배포
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: call
+  labels:
+    app: call
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: call
+  template:
+    metadata:
+      labels:
+        app: call
+    spec:
+      containers:
+        - name: call
+          image: leeeojin/call:v2
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+          - name: ebs-volume
+            mountPath: /data 
+ ...
+      volumes:
+      - name: ebs-volume
+        persistentVolumeClaim:
+          claimName: pvc 
+
+```
+![image](https://github.com/dseojin/taxisvc/assets/173647509/ffdf5a8c-f6cc-4d40-b809-83bc427efa75)
+
+
+#### - pvc 조회 시 상태가 Bound 로 변경됨 확인
+![image](https://github.com/dseojin/taxisvc/assets/173647509/9424cbed-cac5-4060-bd47-de9ca2a5d141)
+
 
 
 ----------
