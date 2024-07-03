@@ -456,8 +456,7 @@ public class CallViewViewHandler {
   ```
 
 #### - CodeBuild 프로젝트 생성
-![image](https://github.com/dseojin/taxisvc/assets/173647509/371f896e-9a9d-454e-8d42-9f8301b2ddb8)
-
+![image](https://github.com/dseojin/taxisvc/assets/173647509/a004ea44-e409-411b-974b-84711df0554d)
 
 
 
