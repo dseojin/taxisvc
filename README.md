@@ -266,8 +266,9 @@ spring:
 ----------
 
 ### 3.4 분산 데이터 프로젝션 (CQRS)
+#### - Call, Drive 데이터 변경 발생 시 발행되는 이벤트를 sub해 데이터를 저장하는 mypage 구현
+1. mypage 서비스에서는 타서비스들에서 발행된 이벤트들을 읽어 데이터를 저장하는 CallViewViewHandler 를 생성하여 데이터 프로젝션을 수행하였다.
 ```
-// mypage 서비스에서는 타서비스들에서 발행된 이벤트들을 읽어 데이터를 저장하는 CallViewViewHandler 를 생성하여 데이터 프로젝션을 수행하였다.
 // mypage/src/main/java/taxisvc/infra/CallViewViewHandler.java
 
 ...
@@ -319,12 +320,14 @@ public class CallViewViewHandler {
     }
 ...
 ```
-#### - call 1건을 등록한 후, CallView 의 내용을 확인한다
+
+#### - mypage 호출 테스트
+  ##### 1. call 1건을 등록한 후, CallView 의 내용을 확인한다
   ![image](https://github.com/dseojin/taxisvc/assets/173647509/c197c087-f43a-4504-b593-345ba76192fe)
 
   ![image](https://github.com/dseojin/taxisvc/assets/173647509/24f35b38-b755-4e90-b96f-3604cdcebfd4)
 
-#### - drive 서비스(8084)를 다운시킨 다음, CallView 의 내용을 확인하여도 서비스가 안정적임을 확인한다.
+  ##### 2. drive 서비스(8084)를 다운시킨 다음, CallView 의 내용을 확인하여도 서비스가 안정적임을 확인한다.
   ![image](https://github.com/dseojin/taxisvc/assets/173647509/a5fafba3-eb12-4bc6-8a56-73b30787e0d8)
 
   ![image](https://github.com/dseojin/taxisvc/assets/173647509/8e9cf889-c527-43be-8801-fae50ab467f3)
