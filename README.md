@@ -173,8 +173,9 @@ public class Drive {
 ```
 
 #### - 택시 서비스 수행 결과
-1. user가 userId, userName, distance 입력하여 택시 call 실행 시 payment 서비스의 결제 로직이 수행되고, 결제가 완료되면 payment 서비스로부터 'farePaid' 이벤트가 발행된다
-2. drive 서비스에서 'farePaid' 이벤트 수신 시 Drive 데이터 생성 및 'driveStarted' 이벤트를 발행한다
+1. user가 userId, userName, distance 입력하여 택시 call 실행 시 payment 서비스의 결제 로직이 수행되고 'callPlaced' 이벤트를 발행한다.
+2. 결제가 정상 완료되면 payment 서비스로부터 'farePaid' 이벤트가 발행된다
+3. drive 서비스에서 'farePaid' 이벤트 수신 시 Drive 데이터 생성 및 'driveStarted' 이벤트를 발행한다
    ##### 1. http 명령어를 사용하여 사용자ID, 사용자명, 거리 데이터를 넘겨 call 1건을 등록한다
    ![image](https://github.com/dseojin/taxisvc/assets/173647509/b0b1b0e6-1cd4-414a-978a-b69c4c61ce1f)
 
@@ -184,8 +185,8 @@ public class Drive {
 
 
 
-3. driver가 driveId를 입력하여 운행종료 실행 시  'driveEnded' 이벤트가 발행된다
-4. call 서비스에서 'driveEnded' 이벤트를 Sub 할 경우 callStatus를 'driveComplete'로 바꾼다
+4. driver가 driveId를 입력하여 운행종료 실행 시  'driveEnded' 이벤트가 발행된다
+5. call 서비스에서 'driveEnded' 이벤트를 Sub 할 경우 callStatus를 'driveComplete'로 바꾼다
 
    
    ##### 1. /drives/end url에 드라이브ID를 전달하여 해당 드라이브ID를 운행종료시킨다.
