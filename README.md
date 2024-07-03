@@ -818,11 +818,6 @@ kubectl label namespace default istio-injection=enabled
 ```
 gitpod.io/#/github.com/dseojin/taxisvc
 
-//로컬 카프카
-cd infra
-docker-compose exec -it kafka /bin/bash
-cd /bin
-./kafka-console-consumer --bootstrap-server http://localhost:9092 --topic taxisvc --from-beginning
 
 //클러스터에 Event Store(kafka) 설치
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
@@ -844,6 +839,21 @@ helm install my-kafka bitnami/kafka --version 23.0.5
             --from-beginning
 
 my-kafka-0.my-kafka-headless.default.svc.cluster.local:9092
+
+kubectl get all 해서 서비스랑 파드 이름 알기~
+
+// k8s kafka pod 접속해서 이벤트 보기
+kubectl exec my-kafka-0 -it /bin/bash
+cd /bin
+kafka-console-consumer.sh --bootstrap-server http://my-kafka:9092 --topic taxisvc --from-beginning
+
+
+
+//로컬 카프카
+cd infra
+docker-compose exec -it kafka /bin/bash
+cd /bin
+./kafka-console-consumer --bootstrap-server http://localhost:9092 --topic taxisvc --from-beginning
 
 cd infra
 docker-compose exec -it kafka /bin/bash
