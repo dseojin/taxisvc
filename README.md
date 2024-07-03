@@ -479,6 +479,11 @@ public class CallViewViewHandler {
 
 
 
+#### - 배포완료 후 pod 확인
+![image](https://github.com/dseojin/taxisvc/assets/173647509/51fbc9fd-906a-4807-913f-f0efa11e30c6)
+
+
+
 #### - 배포완료 후 gateway를 통해 call 1건 등록 테스트
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/23abdc98-71a0-4a60-9d17-ce7a80a98796)
 
@@ -573,8 +578,6 @@ public class CallViewViewHandler {
 
 #### - PVC 생성
 ```
-
-
 kubectl apply -f - <<EOF
 apiVersion: v1
 kind: PersistentVolumeClaim
