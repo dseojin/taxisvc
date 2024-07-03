@@ -592,25 +592,6 @@ spec:
 EOF
 ```
 
-```
-
-  kubectl apply -f - <<EOF
-  apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    name: aws-ebs
-    labels:
-      app: test-pvc
-  spec:
-    accessModes:
-    - ReadWriteMany
-    resources:
-      requests:
-        storage: 1Mi
-    storageClassName: ebs-sc
-  EOF
-  ```
-
 
 #### - pvc 조회. 상태가 pending 
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/300d9c74-767d-43f4-879a-2eee771f9022)
