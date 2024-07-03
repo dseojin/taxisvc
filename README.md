@@ -174,7 +174,7 @@ public class Drive {
 
 #### - 택시 서비스 수행 결과
 1. user가 userId, userName, distance 입력하여 택시 call 실행 시 payment 서비스의 결제 로직이 수행되고, 결제가 완료되면 payment 서비스로부터 'farePaid' 이벤트가 발행된다
-2. drive 모듈에서 'farePaid' 이벤트 수신 시 Drive 데이터 생성 및 'driveStarted' 이벤트를 발행한다
+2. drive 서비스에서 'farePaid' 이벤트 수신 시 Drive 데이터 생성 및 'driveStarted' 이벤트를 발행한다
    ##### 1. http 명령어를 사용하여 사용자ID, 사용자명, 거리 데이터를 넘겨 call 1건을 등록한다
    ![image](https://github.com/dseojin/taxisvc/assets/173647509/b0b1b0e6-1cd4-414a-978a-b69c4c61ce1f)
 
@@ -185,7 +185,7 @@ public class Drive {
 
 
 3. driver가 driveId를 입력하여 운행종료 실행 시  'driveEnded' 이벤트가 발행된다
-4. call 모듈에서 'driveEnded' 이벤트를 Sub 할 경우 callStatus를 'driveComplete'로 바꾼다
+4. call 서비스에서 'driveEnded' 이벤트를 Sub 할 경우 callStatus를 'driveComplete'로 바꾼다
 
    
    ##### 1. /drives/end url에 드라이브ID를 전달하여 해당 드라이브ID를 운행종료시킨다.
@@ -206,7 +206,7 @@ public class Drive {
 #### - 사용자가 call 요청을 하였으나 비즈니스 예외 케이스로 운행불가 발생 시 Call 데이터 롤백이 아닌 callStatus 값 변경을 통해 데이터를 동기화한다.
 1. 거리 기준 초과로 드라이버 배정 불가 판단 시 'driveNotAvaliabled' 이벤트를 Pub 한다
 2. call 서비스에서 'driveNotAvaliabled' 이벤트 수신 시 callStatus를 'requestCancel'로 변경 후 'callCancelled' 이벤트를 발행한다.
-3. payment 모듈에서 'callCancelled' 이벤트 Sub 시 pay cancel 로직을 수행한다.
+3. payment 서비스에서 'callCancelled' 이벤트 Sub 시 pay cancel 로직을 수행한다.
    ##### 1. call 1건 등록 완료.(callID = 2)
    ![image](https://github.com/dseojin/taxisvc/assets/173647509/657da825-40ce-4a86-9ea7-45a31b6c4456)
 
