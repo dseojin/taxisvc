@@ -3,7 +3,7 @@
 ## 1. 아키텍처
 ### 1.1 MSA 아키텍처 구성도
 #### - 구성도 설명
-1. gateway service를 통해 단일진입이 가능하도록 라우팅 설정
+1. 라우팅룰이 설정된 gateway service를 통해 단일진입이 가능하도록 설정
 2. 클라이언트가 택시를 요청하는 call 서비스, 택시 요금 결제가 이루어지는 payment 서비스, 운행 관련 데이터를 관리하는 drive 서비스로 구성되어있고
 call 서비스와 drive 서비스의 상세 모델을 참조하여 calldashboard(callView) 서비스를 만들어 CQRS를 적용
 3. 서비스들간에 이벤트 스토어인 카프카를 사용하여 pub/sub
