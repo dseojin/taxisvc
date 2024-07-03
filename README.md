@@ -341,6 +341,7 @@ public class CallViewViewHandler {
 
 ## 4. 운영
 ### 4.1 클라우드 배포 - Container 운영
+1. call 서비스를 따로 빼서 mvn package 로 타겟 생성 후 배포 진행
 #### - ECR 생성 후 ECR에 이미지 배포
   ```
   docker build -t 879772956301.dkr.ecr.ap-northeast-1.amazonaws.com/call:v1 .
