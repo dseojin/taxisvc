@@ -475,7 +475,7 @@ public class CallViewViewHandler {
 
   
 
-#### - 빌드 시작 및 단계 세부 정보 확인
+#### - 단계 세부 정보 확인
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/b4947f28-4ef0-4406-9ff9-4a7bf8cd991f)
 
 
