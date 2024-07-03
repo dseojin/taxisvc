@@ -37,7 +37,7 @@ call 서비스와 drive 서비스의 상세 모델을 참조하여 calldashboard
 
 ## 3. 구현
 ### 3.1 분산트랜잭션
-#### - payment 서비스 구현
+#### - payment 서비스의 Aggregate 구현
 1. payment 서비스와 drive 서비스간의 통신에서 이벤트 메세지를 Pub/Sub 하여 분산 트랜젝션을 구현
 2. payment 서비스에서 결제가 완료되면 Payment Aggregate에 insert가 발생하고 @PostPersist를 통해 post 발생 시 'farePaid' 이벤트를 발행
 ```
@@ -70,7 +70,7 @@ public class Payment {
     }
 ```
 
-#### - drive 서비스 구현
+#### - drive 서비스의 Policy, Aggregate 구현
 1. payment 서비스로부터 'farePaid' 이벤트를 sub한 drive 서비스는 policy를 통해 운행을 시작하는 로직을 구현하였다.
 
 ```
