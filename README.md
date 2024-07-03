@@ -479,15 +479,29 @@ public class CallViewViewHandler {
 
 
 
-#### - 배포완료 후 pod 확인
+#### - 배포완료 후 pod 확인 시 user07-call 로 생성됨을 확인
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/51fbc9fd-906a-4807-913f-f0efa11e30c6)
 
 
+#### - 이전 call deploy 삭제 후 gateway 라우팅룰 변경 후 재배포하여 call 호출 시 user07-call 서비스가 호출되도록 변경
+```
+...
+// /workspace/taxisvc/gateway/src/main/resources/application.yml
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: call
+          uri: http://user07-call:8080
+          predicates:
+            - Path=/calls/**, 
+...
 
-#### - 배포완료 후 gateway를 통해 call 1건 등록 테스트
-![image](https://github.com/dseojin/taxisvc/assets/173647509/23abdc98-71a0-4a60-9d17-ce7a80a98796)
+```
 
-
+#### - gateway 배포 완료 후 gateway를 통해 call 1건 등록 테스트
+![image](https://github.com/dseojin/taxisvc/assets/173647509/dd1ac2e4-169f-4519-83e1-c9a48e3dec84)
 
 
 ----------
