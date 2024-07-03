@@ -347,7 +347,7 @@ public class CallViewViewHandler {
   ![image](https://github.com/dseojin/taxisvc/assets/173647509/c9838086-a7e8-4ae6-8a28-2ef84dee3c87)
 
 
-#### buildspec-kubectl.yml 적용
+#### - buildspec-kubectl.yml 적용
   ```
   version: 0.2
     
@@ -451,23 +451,32 @@ public class CallViewViewHandler {
   ```
 
 #### - CodeBuild 프로젝트 생성
-  ![image](https://github.com/dseojin/taxisvc/assets/173647509/6bcc4d01-2823-4e0a-b17f-fc5152fbeca8)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/371f896e-9a9d-454e-8d42-9f8301b2ddb8)
+
+
 
 
 #### - CodeBuild가 ECR에 접근할 수 있도록 정책 설정
-  ![image](https://github.com/dseojin/taxisvc/assets/173647509/92656010-7e4a-4f2e-aae0-8c28ab05b5b8)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/e43505d4-d179-432e-bbae-8ff5a6ae28d7)
+
+![image](https://github.com/dseojin/taxisvc/assets/173647509/92656010-7e4a-4f2e-aae0-8c28ab05b5b8)
 
   
 
 #### - github로 소스코드 수정 시 자동 build 및 이미지 생성 확인
-  ![image](https://github.com/dseojin/taxisvc/assets/173647509/85d1d213-64d9-4f03-8b98-8d010d965ae5)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/85d1d213-64d9-4f03-8b98-8d010d965ae5)
 
-  ![image](https://github.com/dseojin/taxisvc/assets/173647509/74b64c6f-65f3-4efc-b2ef-df355029133a)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/74b64c6f-65f3-4efc-b2ef-df355029133a)
 
   
 
 #### - 빌드 시작 및 단계 세부 정보 확인
-  ![image](https://github.com/dseojin/taxisvc/assets/173647509/b4947f28-4ef0-4406-9ff9-4a7bf8cd991f)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/b4947f28-4ef0-4406-9ff9-4a7bf8cd991f)
+
+
+
+#### - 배포완료 후 gateway를 통해 call 1건 등록 테스트
+![image](https://github.com/dseojin/taxisvc/assets/173647509/23abdc98-71a0-4a60-9d17-ce7a80a98796)
 
 
 
@@ -475,20 +484,20 @@ public class CallViewViewHandler {
 ----------
 ### 4.2 컨테이너 자동확장 - HPA
 #### - call 서비스에 Auto Scale-Out 설정 후 설정값 확인
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/bc4d6fc6-b948-4080-9b1f-721c15537ed5)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/bc4d6fc6-b948-4080-9b1f-721c15537ed5)
 
 
 #### - seige 명령으로 부하를 주어서 Pod 가 늘어나도록 한다
-##### siege -c20 -t40S -v http://call:8080/calls
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/ceeb66b5-ed9f-4196-88fa-bd4d6899ef22)
+  ##### siege -c20 -t40S -v http://call:8080/calls
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/ceeb66b5-ed9f-4196-88fa-bd4d6899ef22)
 
   
 #### - kubectl get po -w 명령을 사용하여 pod 가 생성되는 것을 확인한다.
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/9127ab81-7c76-493d-829e-fade5181bf02)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/9127ab81-7c76-493d-829e-fade5181bf02)
 
 
 #### - kubectl get hpa 명령어로 CPU 값이 늘어난 것을 확인 한다.
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/2aee2c2a-ac3e-43aa-876c-45d9000ada28)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/2aee2c2a-ac3e-43aa-876c-45d9000ada28)
 
 ----------
 
@@ -529,22 +538,23 @@ public class CallViewViewHandler {
   ```
 
 #### - YAML 기반의 ConfigMap을 생성
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/744eaf36-fce8-4829-aa2c-57123e15a656)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/744eaf36-fce8-4829-aa2c-57123e15a656)
 
 
 #### - call 서비스 재배포
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/646958c3-d7a1-42b7-a0b6-04090b0e97f2)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/646958c3-d7a1-42b7-a0b6-04090b0e97f2)
 
 
 #### - log level 이 'DEBUG'로 적용됨을 확인한다.
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/dc15342a-62dc-41ff-92d5-be46c0774726)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/dc15342a-62dc-41ff-92d5-be46c0774726)
 
 
 #### - configMap으로 log level을 'INFO'로 변경
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/de521d24-2296-4c1e-a3f0-03b163574638)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/de521d24-2296-4c1e-a3f0-03b163574638)
+
 
 #### - call 서비스 재배포 후 log level 이 'INFO'로 변경됨을 확인한다.
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/e19a2421-1207-4823-a05d-38ddcd4a394e)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/e19a2421-1207-4823-a05d-38ddcd4a394e)
 
 ----------
 
@@ -584,7 +594,7 @@ public class CallViewViewHandler {
 
 
 ### 4.5 무정지배포
-#### - call 서비스의 deployment.yaml 에 image 버전 번경 및 readinessProbe 설정
+#### - call 서비스의 deployment.yaml 에 image 버전 번경(v2 -> v3) 및 readinessProbe 설정
   ```
   apiVersion: apps/v1
   kind: Deployment
@@ -592,7 +602,7 @@ public class CallViewViewHandler {
       spec:
         containers:
           - name: call
-            image: leeeojin/call:v3
+            image: leeeojin/call:v3 # v2 -> v3으로 변경
             ...
             readinessProbe:
               httpGet:
@@ -609,17 +619,17 @@ public class CallViewViewHandler {
 
 #### - siege를 통해 충분한 시간만큼 부하를 준다.
 ##### siege -c1 -t60S -v http://call:8080/calls --delay=1S
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/5bbfe33d-bbbe-495f-8a4a-e4afaedd2ae1)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/5bbfe33d-bbbe-495f-8a4a-e4afaedd2ae1)
 
 
 
 #### - 이전 버전(‘v2’)이 부하를 받는 상황에서 새로운 버전 ‘v3’ 버전을 배포한다.
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/e85a85e6-2b18-41f9-9338-ca95008de9c7)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/e85a85e6-2b18-41f9-9338-ca95008de9c7)
 
 
 
-#### - siege 로그를 보면서 배포시 무정지로 배포된 것을 확인
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/8d320499-85b8-43aa-a283-24fe32870f07)
+#### - siege 로그 확인 시 무정지로 배포된 것을 확인
+![image](https://github.com/dseojin/taxisvc/assets/173647509/8d320499-85b8-43aa-a283-24fe32870f07)
 
 
 
@@ -629,44 +639,114 @@ public class CallViewViewHandler {
 
 ### 4.6 서비스 메쉬 - istio
 #### - Istio 설치 진행 후 자동으로 사이드카(Sidecar)를 Pod 내에 인잭션하도록 설정
-  ```
-  kubectl label namespace default istio-injection=enabled
-  ```
+```
+kubectl label namespace default istio-injection=enabled
+```
+
 #### - pod 배포 및 pod 확인
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/f7f30582-24fc-4039-9658-459fb7aab2d6)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/f7f30582-24fc-4039-9658-459fb7aab2d6)
+
    
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/7135c520-b492-4709-a06f-71a92fb311b2)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/7135c520-b492-4709-a06f-71a92fb311b2)
 
 
 -----
 
 ### 4.7 통합모니터링 - grafana
-#### - istio svc 조회
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/6627ce81-b545-477c-94c1-aa818c94ffde)
+#### - istio svc 리스트 조회
+![image](https://github.com/dseojin/taxisvc/assets/173647509/6627ce81-b545-477c-94c1-aa818c94ffde)
 
 
 
 #### - Grafana 서비스 Open - Service Scope을 LoadBalancer Type으로 수정
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/1dfe09da-3e2a-483e-a66e-2fb76c196fd0)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/1dfe09da-3e2a-483e-a66e-2fb76c196fd0)
 
 
 
 #### - Grafana External IP 접속 후 Istio Service Dashboard 조회
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/d9030c4c-5f1d-4588-b374-814673ece042)
+![image](https://github.com/dseojin/taxisvc/assets/173647509/d9030c4c-5f1d-4588-b374-814673ece042)
 
 
 
 #### - Grafana providing Dashboard 활용하기
-##### 1. id 315번 dashboard를 load 하여 import
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/866f1cab-c3fc-46fa-a39a-9274b8d9e76a)
+  ##### 1. id 315번 dashboard를 load 하여 import
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/866f1cab-c3fc-46fa-a39a-9274b8d9e76a)
 
 
-##### 2. Siege 터미널에서 call 서비스로 부하를 발생 
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/84d4cfb8-34e4-45bc-83d0-5c77b01a8303)
+  ##### 2. Siege 터미널에서 call 서비스로 부하를 발생 
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/84d4cfb8-34e4-45bc-83d0-5c77b01a8303)
 
 
-##### 3. 부하량에 따른 서비스 차트의 실시간 Gauge 확인
-   ![image](https://github.com/dseojin/taxisvc/assets/173647509/b2c9e392-b96e-4409-b2f3-835bc247bfd9)
+  ##### 3. 부하량에 따른 서비스 차트의 실시간 Gauge 확인
+  ![image](https://github.com/dseojin/taxisvc/assets/173647509/b2c9e392-b96e-4409-b2f3-835bc247bfd9)
+
+
+
+
+# 끝
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -733,94 +813,4 @@ http :8085/callViews
 
 ```
 
-# 
-
-## Model
-www.msaez.io/#/173647509/storming/taxisvc
-
-## Before Running Services
-### Make sure there is a Kafka server running
-```
-cd kafka
-docker-compose up
-```
-- Check the Kafka messages:
-```
-cd infra
-docker-compose exec -it kafka /bin/bash
-cd /bin
-./kafka-console-consumer --bootstrap-server localhost:9092 --topic
-```
-
-## Run the backend micro-services
-See the README.md files inside the each microservices directory:
-
-- call
-- payment
-- drive
-- mypage
-
-
-## Run API Gateway (Spring Gateway)
-```
-cd gateway
-mvn spring-boot:run
-```
-
-## Test by API
-- call
-```
- http :8088/calls callId="callId" userId="userId" userName="userName" callStatus="callStatus" distance="distance" 
-```
-- payment
-```
- http :8088/payments payId="payId" callId="callId" fare="fare" 
-```
-- drive
-```
- http :8088/drives driveId="driveId" driverName="driverName" callId="callId" driveStatus="driveStatus" taxiNum="taxiNum" 
-```
-- mypage
-```
-```
-
-
-## Run the frontend
-```
-cd frontend
-npm i
-npm run serve
-```
-
-## Test by UI
-Open a browser to localhost:8088
-
-## Required Utilities
-
-- httpie (alternative for curl / POSTMAN) and network utils
-```
-sudo apt-get update
-sudo apt-get install net-tools
-sudo apt install iputils-ping
-pip install httpie
-```
-
-- kubernetes utilities (kubectl)
-```
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-```
-
-- aws cli (aws)
-```
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-```
-
-- eksctl 
-```
-curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-sudo mv /tmp/eksctl /usr/local/bin
-```
 
