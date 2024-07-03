@@ -468,7 +468,7 @@ public class CallViewViewHandler {
 
   
 
-#### - github로 소스코드 수정 시 자동 build 및 이미지 생성 확인
+#### - github로 소스코드 수정 시 자동 build/deploy 및 이미지 생성 확인
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/85d1d213-64d9-4f03-8b98-8d010d965ae5)
 
 ![image](https://github.com/dseojin/taxisvc/assets/173647509/74b64c6f-65f3-4efc-b2ef-df355029133a)
