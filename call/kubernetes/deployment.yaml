@@ -19,6 +19,9 @@ spec:
           image: leeeojin/call:v2
           ports:
             - containerPort: 8080
+          volumeMounts:
+          - name: ebs-volume
+            mountPath: /data 
           resources:
             requests:
               cpu: "200m"
@@ -44,3 +47,7 @@ spec:
             timeoutSeconds: 2
             periodSeconds: 5
             failureThreshold: 5
+      volumes:
+      - name: ebs-volume
+        persistentVolumeClaim:
+          claimName: pvc 

@@ -50,7 +50,7 @@ spring:
     gateway:
       routes:
         - id: call
-          uri: http://call:8080
+          uri: http://user07-call:8080
           predicates:
             - Path=/calls/**, 
         - id: payment
